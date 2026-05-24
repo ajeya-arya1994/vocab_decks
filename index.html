@@ -4,153 +4,223 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Vocab Decks</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0f1c2e;--navy2:#162336;--navy3:#1e3048;--navy4:#2a4160;--saffron:#e8973a;--cream:#fdf6ed;--teal:#2ec4a5;--rose:#e05c6e;--text:#fdf6ed;--text2:#b8cce0;--text3:#6e8faa;--card-bg:#162336;--input-bg:#1e3048;--radius:14px;--radius-sm:8px;}
+:root{
+  --bg:#faf6ef;
+  --bg2:#f3ede2;
+  --bg3:#ebe3d5;
+  --bg4:#ddd3c0;
+  --amber:#b5620a;
+  --amber2:#d4760f;
+  --amber3:#f0a54a;
+  --amber-light:#fef0d8;
+  --teal:#1a7a6e;
+  --teal-light:#e6f5f3;
+  --rose:#b03040;
+  --rose-light:#fceef0;
+  --text:#2c1f0e;
+  --text2:#5a4430;
+  --text3:#9a7d5e;
+  --border:#d6c9b4;
+  --border2:#c4b49e;
+  --card:#fffdf8;
+  --radius:14px;
+  --radius-sm:9px;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{background:var(--navy);font-family:'DM Sans',sans-serif;color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
-.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;width:100%;}
-.header{padding:14px 20px 8px;flex-shrink:0;}
+html,body{height:100%;background:var(--bg);}
+body{font-family:'Source Sans 3',sans-serif;color:var(--text);font-size:16px;line-height:1.5;overflow:hidden;display:flex;flex-direction:column;}
+.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;width:100%;}
+
+/* Header */
+.header{padding:16px 20px 10px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;}
 .header-top{display:flex;align-items:center;justify-content:space-between;}
-.header-title{font-family:'Lora',serif;font-size:20px;color:var(--cream);}
-.header-sub{font-size:11px;color:var(--text3);margin-top:1px;}
-.header-badge{background:var(--saffron);color:var(--navy);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
-.nav{display:flex;gap:4px;padding:0 14px 10px;flex-shrink:0;}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;border:none;background:transparent;color:var(--text3);font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s;}
-.nav-btn svg{width:18px;height:18px;stroke-width:1.8;}
-.nav-btn.active{background:var(--navy3);color:var(--saffron);}
-.content{flex:1;overflow-y:auto;padding:0 14px 24px;-webkit-overflow-scrolling:touch;}
-.content::-webkit-scrollbar{display:none;}
+.header-title{font-family:'Lora',serif;font-size:22px;color:var(--text);font-weight:600;letter-spacing:-0.3px;}
+.header-sub{font-size:13px;color:var(--text3);margin-top:1px;}
+.header-badge{background:var(--amber);color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;}
+
+/* Nav */
+.nav{display:flex;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;padding:0 8px;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;border:none;background:transparent;color:var(--text3);font-size:11px;font-family:'Source Sans 3',sans-serif;cursor:pointer;border-bottom:2.5px solid transparent;transition:all 0.2s;margin-bottom:-1px;}
+.nav-btn svg{width:20px;height:20px;stroke-width:1.7;}
+.nav-btn.active{color:var(--amber);border-bottom-color:var(--amber);}
+.nav-btn:hover:not(.active){color:var(--text2);}
+
+/* Content */
+.content{flex:1;overflow-y:auto;padding:16px 16px 32px;background:var(--bg);-webkit-overflow-scrolling:touch;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-track{background:transparent;}
+.content::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
 .section{display:none;animation:fadeIn 0.2s ease;}
 .section.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
-.card{background:var(--card-bg);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
-.card-title{font-size:14px;font-weight:500;color:var(--cream);margin-bottom:10px;}
-.deck-item{background:var(--card-bg);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.18s;}
-.deck-item.selected{border-color:var(--saffron);}
-.deck-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--navy4),var(--navy3));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px;}
+
+/* Deck items */
+.deck-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.18s;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.deck-item:hover{border-color:var(--border2);background:var(--bg2);}
+.deck-item.selected{border-color:var(--amber);background:var(--amber-light);}
+.deck-icon{width:44px;height:44px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;}
 .deck-info{flex:1;min-width:0;}
-.deck-name{font-size:14px;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.deck-meta{font-size:11px;color:var(--text3);margin-top:1px;}
-.deck-prog{height:3px;background:var(--navy4);border-radius:2px;margin-top:5px;}
-.deck-prog-fill{height:100%;border-radius:2px;background:var(--saffron);transition:width 0.4s;}
-.deck-del{width:30px;height:30px;border:none;background:rgba(224,92,110,0.1);border-radius:8px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-label{display:block;font-size:11px;color:var(--text3);margin-bottom:4px;margin-top:10px;letter-spacing:0.3px;text-transform:uppercase;}
-input[type=text],input[type=password],select,textarea{width:100%;background:var(--input-bg);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
-input[type=text]:focus,input[type=password]:focus,select:focus,textarea:focus{border-color:var(--saffron);}
+.deck-name{font-size:16px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.deck-meta{font-size:13px;color:var(--text3);margin-top:2px;}
+.deck-prog{height:4px;background:var(--bg3);border-radius:2px;margin-top:6px;}
+.deck-prog-fill{height:100%;border-radius:2px;background:var(--amber);transition:width 0.4s;}
+.deck-del{width:32px;height:32px;border:none;background:var(--rose-light);border-radius:8px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(176,48,64,0.15);}
+
+/* Labels and inputs */
+label{display:block;font-size:12px;font-weight:600;color:var(--text3);margin-bottom:5px;margin-top:14px;letter-spacing:0.4px;text-transform:uppercase;}
+input[type=text],input[type=password],select,textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-family:'Source Sans 3',sans-serif;font-size:16px;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+input[type=text]:focus,input[type=password]:focus,select:focus,textarea:focus{border-color:var(--amber2);}
 input::placeholder,textarea::placeholder{color:var(--text3);}
-select option{background:var(--navy2);}
-textarea{min-height:68px;resize:vertical;line-height:1.5;}
-.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.18s;}
-.btn:active{transform:scale(0.97);}
-.btn-primary{background:var(--saffron);color:var(--navy);}
-.btn-secondary{background:var(--navy3);color:var(--text2);border:1px solid rgba(255,255,255,0.1);}
-.btn-teal{background:rgba(46,196,165,0.15);color:var(--teal);border:1px solid rgba(46,196,165,0.25);}
-.btn-rose{background:rgba(224,92,110,0.12);color:var(--rose);border:1px solid rgba(224,92,110,0.2);}
-.btn-warn{background:rgba(232,151,58,0.15);color:var(--saffron);border:1px solid rgba(232,151,58,0.3);}
-.btn-row{display:flex;gap:8px;margin-top:10px;}
+textarea{min-height:76px;resize:vertical;line-height:1.6;}
+
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:13px;border:none;border-radius:var(--radius-sm);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.18s;}
+.btn:active{transform:scale(0.98);}
+.btn-primary{background:var(--amber);color:#fff;box-shadow:0 2px 6px rgba(181,98,10,0.25);}
+.btn-primary:hover{background:var(--amber2);}
+.btn-secondary{background:var(--bg2);color:var(--text2);border:1.5px solid var(--border);}
+.btn-secondary:hover{background:var(--bg3);}
+.btn-teal{background:var(--teal-light);color:var(--teal);border:1.5px solid rgba(26,122,110,0.25);}
+.btn-rose{background:var(--rose-light);color:var(--rose);border:1.5px solid rgba(176,48,64,0.2);}
+.btn-warn{background:var(--amber-light);color:var(--amber);border:1.5px solid rgba(181,98,10,0.25);}
+.btn-row{display:flex;gap:10px;margin-top:12px;}
 .btn-row .btn{flex:1;}
-.prog-bar{height:4px;background:var(--navy3);border-radius:2px;margin-bottom:8px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--saffron));transition:width 0.4s;}
-.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:12px;}
-.fc{background:var(--card-bg);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 20px;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;position:relative;transition:transform 0.15s;margin-bottom:10px;}
+
+/* Progress */
+.prog-bar{height:5px;background:var(--bg3);border-radius:3px;margin-bottom:10px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width 0.4s;}
+.prog-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:14px;}
+
+/* Flashcard */
+.fc{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:28px 22px;min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;position:relative;transition:transform 0.15s;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
 .fc:active{transform:scale(0.985);}
-.fc-lang{position:absolute;top:12px;left:12px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;}
-.fc-lang.en{background:rgba(46,196,165,0.15);color:var(--teal);}
-.fc-lang.np{background:rgba(232,151,58,0.15);color:var(--saffron);}
-.fc-rev{position:absolute;top:12px;right:12px;font-size:11px;color:var(--text3);}
-.fc-word{font-family:'Lora',serif;font-size:28px;color:var(--cream);margin-bottom:6px;line-height:1.2;}
-.fc-hint{font-size:12px;color:var(--text3);}
-.fc-divider{width:36px;height:1px;background:rgba(255,255,255,0.1);margin:12px auto;}
-.answer-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;width:100%;}
+.fc-lang{position:absolute;top:14px;left:14px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.fc-lang.en{background:var(--teal-light);color:var(--teal);}
+.fc-lang.np{background:var(--amber-light);color:var(--amber);}
+.fc-rev{position:absolute;top:14px;right:14px;font-size:12px;color:var(--text3);}
+.fc-word{font-family:'Lora',serif;font-size:32px;color:var(--text);margin-bottom:8px;line-height:1.2;font-weight:500;}
+.fc-hint{font-size:14px;color:var(--text3);}
+.fc-divider{width:40px;height:1.5px;background:var(--border);margin:14px auto;}
+.answer-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bg3);font-size:15px;width:100%;}
 .answer-row:last-child{border:none;}
-.ak{color:var(--text3);min-width:78px;text-align:left;}
-.av{color:var(--cream);text-align:right;max-width:60%;}
-.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.stat{background:var(--card-bg);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:12px;}
-.stat-n{font-family:'Lora',serif;font-size:26px;color:var(--cream);}
-.stat-l{font-size:11px;color:var(--text3);margin-top:1px;}
-.drop-zone{border:1.5px dashed rgba(232,151,58,0.35);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;color:var(--text3);margin-bottom:10px;}
-.drop-zone:active{background:rgba(232,151,58,0.05);}
-.ai-box{background:var(--navy3);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text2);margin:8px 0;}
-.empty{text-align:center;padding:28px 0;color:var(--text3);}
-.empty p{font-size:13px;}
-.msg{font-size:12px;text-align:center;margin-top:6px;min-height:16px;}
+.ak{color:var(--text3);min-width:90px;text-align:left;font-size:13px;}
+.av{color:var(--text);text-align:right;max-width:60%;font-weight:500;}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.stat-n{font-family:'Lora',serif;font-size:30px;color:var(--text);font-weight:500;}
+.stat-l{font-size:13px;color:var(--text3);margin-top:2px;}
+
+/* Scan */
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:28px;text-align:center;cursor:pointer;color:var(--text3);margin-bottom:12px;background:var(--bg2);transition:all 0.2s;}
+.drop-zone:hover,.drop-zone:active{border-color:var(--amber);background:var(--amber-light);}
+.ai-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-size:14px;color:var(--text2);margin:10px 0;}
+
+/* Word list */
+.word-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--bg3);}
+.word-row:last-child{border:none;}
+
+/* Tags */
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:20px;}
+.tag-en{background:var(--teal-light);color:var(--teal);}
+.tag-np{background:var(--amber-light);color:var(--amber);}
+.tag-known{background:var(--teal-light);color:var(--teal);}
+
+/* Empty */
+.empty{text-align:center;padding:32px 0;color:var(--text3);}
+.empty p{font-size:15px;line-height:1.6;}
+
+/* Messages */
+.msg{font-size:13px;text-align:center;margin-top:8px;min-height:18px;}
 .msg.ok{color:var(--teal);}
 .msg.err{color:var(--rose);}
-.sec-head{margin-bottom:12px;}
-.sec-head h2{font-family:'Lora',serif;font-size:17px;color:var(--cream);}
+
+/* Section head */
+.sec-head{margin-bottom:14px;}
+.sec-head h2{font-family:'Lora',serif;font-size:20px;color:var(--text);font-weight:600;}
+.sec-head p{font-size:14px;color:var(--text3);margin-top:3px;}
+
+/* Reminder banner */
+.reminder-banner{background:var(--amber-light);border:1.5px solid rgba(181,98,10,0.3);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px;}
+.reminder-title{font-size:14px;font-weight:600;color:var(--amber);}
+.reminder-sub{font-size:13px;color:var(--text2);margin-top:3px;line-height:1.5;}
+.reminder-actions{display:flex;gap:8px;margin-top:10px;}
+.r-btn{font-size:13px;font-weight:600;padding:6px 14px;border:none;border-radius:7px;cursor:pointer;font-family:'Source Sans 3',sans-serif;}
+.r-btn-ok{background:var(--amber);color:#fff;}
+.r-btn-skip{background:transparent;color:var(--text3);border:1.5px solid var(--border);}
+
+/* API overlay */
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;overflow-y:auto;}
+.overlay-icon{font-size:52px;margin-bottom:16px;}
+.overlay-title{font-family:'Lora',serif;font-size:24px;color:var(--text);font-weight:600;margin-bottom:8px;}
+.overlay-sub{font-size:15px;color:var(--text2);line-height:1.6;margin-bottom:24px;}
+.overlay-steps{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px;text-align:left;width:100%;}
+.overlay-step{font-size:14px;color:var(--text2);padding:6px 0;display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid var(--bg3);}
+.overlay-step:last-child{border:none;}
+.overlay-step span{color:var(--amber);font-weight:700;flex-shrink:0;width:20px;}
+.key-input-wrap{position:relative;width:100%;margin-bottom:12px;}
+.key-input-wrap input{padding-right:46px;}
+.key-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;}
+.skip-link{font-size:13px;color:var(--text3);margin-top:14px;cursor:pointer;text-decoration:underline;}
+
+/* Edit modal */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(44,31,14,0.5);z-index:200;display:flex;align-items:flex-end;}
+.modal{background:var(--bg);border-radius:22px 22px 0 0;padding:20px 16px 36px;width:100%;max-height:88vh;overflow-y:auto;border-top:1px solid var(--border);}
+.modal-title{font-family:'Lora',serif;font-size:18px;color:var(--text);font-weight:600;margin-bottom:6px;}
+.edit-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;border:1px solid var(--border);}
+.edit-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.edit-word-num{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;}
+.edit-remove{width:26px;height:26px;border:none;background:var(--rose-light);border-radius:6px;color:var(--rose);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.edit-field{margin-bottom:8px;}
+.edit-field label{font-size:11px;margin-top:6px;}
+.edit-field input{padding:8px 12px;font-size:15px;}
+
 #fileInput,#importFile{display:none;}
 @keyframes dots{0%,20%{content:'';}40%{content:'.';}60%{content:'..';}80%,100%{content:'...'}}
 .loading::after{content:'';animation:dots 1.2s steps(4,end) infinite;}
-.reminder-banner{background:linear-gradient(135deg,rgba(232,151,58,0.18),rgba(232,151,58,0.08));border:1px solid rgba(232,151,58,0.35);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;}
-.reminder-title{font-size:13px;font-weight:500;color:var(--saffron);}
-.reminder-sub{font-size:11px;color:var(--text3);margin-top:2px;}
-.reminder-actions{display:flex;gap:6px;margin-top:8px;}
-.r-btn{font-size:12px;padding:5px 12px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;}
-.r-btn-ok{background:var(--saffron);color:var(--navy);}
-.r-btn-skip{background:transparent;color:var(--text3);border:1px solid rgba(255,255,255,0.1);}
-
-/* API Key setup overlay */
-.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
-.overlay-icon{font-size:48px;margin-bottom:16px;}
-.overlay-title{font-family:'Lora',serif;font-size:22px;color:var(--cream);margin-bottom:8px;}
-.overlay-sub{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:24px;}
-.overlay-steps{background:var(--card-bg);border-radius:var(--radius);padding:14px;margin-bottom:20px;text-align:left;width:100%;}
-.overlay-step{font-size:13px;color:var(--text2);padding:5px 0;display:flex;gap:8px;align-items:flex-start;}
-.overlay-step span{color:var(--saffron);font-weight:500;flex-shrink:0;}
-.key-input-wrap{position:relative;width:100%;margin-bottom:12px;}
-.key-input-wrap input{padding-right:44px;}
-.key-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;}
-.skip-link{font-size:12px;color:var(--text3);margin-top:12px;cursor:pointer;text-decoration:underline;}
-
-/* Edit modal */
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end;}
-.modal{background:var(--navy2);border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-height:85vh;overflow-y:auto;}
-.modal-title{font-family:'Lora',serif;font-size:16px;color:var(--cream);margin-bottom:14px;}
-.edit-card{background:var(--navy3);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.06);}
-.edit-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.edit-word-num{font-size:11px;color:var(--text3);}
-.edit-remove{width:24px;height:24px;border:none;background:rgba(224,92,110,0.15);border-radius:6px;color:var(--rose);cursor:pointer;font-size:14px;}
-.edit-field{margin-bottom:6px;}
-.edit-field label{font-size:10px;margin-top:4px;}
-.edit-field input{padding:7px 10px;font-size:13px;}
 </style>
 </head>
 <body>
 
-<!-- API Key Setup Overlay -->
+<!-- API Key Overlay -->
 <div class="overlay" id="apiOverlay" style="display:none;">
   <div class="overlay-icon">🔑</div>
   <div class="overlay-title">Set up AI Scan</div>
-  <div class="overlay-sub">To scan your handwritten vocab, you need a free Groq API key. Completely free — no credit card needed.</div>
+  <div class="overlay-sub">Get a free Groq API key to scan your handwritten vocab. No credit card needed — completely free.</div>
   <div class="overlay-steps" style="width:100%;">
-    <div class="overlay-step"><span>1.</span> Open <strong style="color:var(--cream)">console.groq.com</strong></div>
-    <div class="overlay-step"><span>2.</span> Sign up free with Google or email</div>
-    <div class="overlay-step"><span>3.</span> Tap <strong style="color:var(--cream)">API Keys → Create API key</strong></div>
-    <div class="overlay-step"><span>4.</span> Copy and paste it below</div>
+    <div class="overlay-step"><span>1.</span><span>Open <strong>console.groq.com</strong> in your browser</span></div>
+    <div class="overlay-step"><span>2.</span><span>Sign up free with Google or email</span></div>
+    <div class="overlay-step"><span>3.</span><span>Tap <strong>API Keys → Create API key</strong></span></div>
+    <div class="overlay-step"><span>4.</span><span>Copy and paste your key below</span></div>
   </div>
   <div class="key-input-wrap">
-    <input type="password" id="apiKeyInput" placeholder="Paste your Groq API key here">
+    <input type="password" id="apiKeyInput" placeholder="Paste your Groq API key (gsk_...)">
     <button class="key-toggle" onclick="toggleKeyVis()">👁</button>
   </div>
   <button class="btn btn-primary" style="width:100%;" onclick="saveApiKey()">Save &amp; Start Scanning</button>
-  <div class="msg" id="apiMsg" style="margin-top:8px;"></div>
-  <div class="skip-link" onclick="closeOverlay()">Skip for now — I'll add words manually</div>
+  <div class="msg" id="apiMsg"></div>
+  <div class="skip-link" onclick="closeOverlay()">Skip — I'll add words manually</div>
 </div>
 
-<!-- Edit Detected Words Modal -->
+<!-- Edit Modal -->
 <div class="modal-overlay" id="editModal" style="display:none;">
   <div class="modal">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <div class="modal-title">Edit detected words</div>
-      <button onclick="closeEditModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;">✕</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <div class="modal-title">Review detected words</div>
+      <button onclick="closeEditModal()" style="background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;line-height:1;">&#10005;</button>
     </div>
-    <p style="font-size:12px;color:var(--text3);margin-bottom:12px;">Review and edit each word before adding to your deck.</p>
+    <p style="font-size:14px;color:var(--text3);margin-bottom:14px;">Edit or remove words before adding to your deck.</p>
     <div id="editCardsList"></div>
-    <div style="margin-top:12px;">
+    <div style="margin-top:14px;position:sticky;bottom:0;background:var(--bg);padding-top:8px;">
       <button class="btn btn-primary" onclick="addAllEdited()">Add all to deck</button>
-      <div class="msg" id="editMsg" style="margin-top:6px;"></div>
+      <div class="msg" id="editMsg"></div>
     </div>
   </div>
 </div>
@@ -158,17 +228,32 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
 <div class="app">
   <div class="header">
     <div class="header-top">
-      <div><div class="header-title">Vocab Decks</div><div class="header-sub">English &#x21d4; Nepali &middot; AI powered</div></div>
+      <div>
+        <div class="header-title">Vocab Decks</div>
+        <div class="header-sub">English &#x21d4; Nepali &middot; AI powered</div>
+      </div>
       <div class="header-badge" id="headerBadge">0 words</div>
     </div>
   </div>
+
   <div class="nav">
-    <button class="nav-btn active" onclick="showTab('decks')" id="nav-decks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5a2 2 0 012-2h13a.5.5 0 01.5.5v13"/><path d="M6 17h14M6 21h14"/></svg>Decks</button>
-    <button class="nav-btn" onclick="showTab('study')" id="nav-study"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 4v16M2 12h20"/></svg>Study</button>
-    <button class="nav-btn" onclick="showTab('add')" id="nav-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>Add</button>
-    <button class="nav-btn" onclick="showTab('camera')" id="nav-camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan</button>
-    <button class="nav-btn" onclick="showTab('words')" id="nav-words"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>Words</button>
+    <button class="nav-btn active" onclick="showTab('decks')" id="nav-decks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5a2 2 0 012-2h13a.5.5 0 01.5.5v13"/><path d="M6 17h14M6 21h14"/></svg>Decks
+    </button>
+    <button class="nav-btn" onclick="showTab('study')" id="nav-study">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 4v16M2 12h20"/></svg>Study
+    </button>
+    <button class="nav-btn" onclick="showTab('add')" id="nav-add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>Add
+    </button>
+    <button class="nav-btn" onclick="showTab('camera')" id="nav-camera">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan
+    </button>
+    <button class="nav-btn" onclick="showTab('words')" id="nav-words">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>Words
+    </button>
   </div>
+
   <div class="content">
 
     <!-- DECKS -->
@@ -177,17 +262,18 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
       <div class="sec-head"><h2>My Decks</h2></div>
       <div id="deckList"></div>
       <div class="card">
-        <div class="card-title">New deck</div>
+        <div class="card-title">&#43; New deck</div>
         <label>Deck name</label>
         <input type="text" id="deckNameInput" placeholder="e.g. Atomic Habits">
-        <div style="margin-top:10px;"><button class="btn btn-primary" onclick="createDeck()">Create deck</button></div>
+        <div style="margin-top:12px;"><button class="btn btn-primary" onclick="createDeck()">Create deck</button></div>
         <div class="msg" id="deckMsg"></div>
       </div>
       <div class="card">
         <div class="card-title">Backup &amp; restore</div>
+        <p style="font-size:14px;color:var(--text3);margin-bottom:10px;">Export your decks regularly to keep your data safe.</p>
         <div class="btn-row">
-          <button class="btn btn-teal" onclick="exportAll()" style="flex:1;font-size:13px;">&#8595; Export .json</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" style="flex:1;font-size:13px;">&#8593; Import</button>
+          <button class="btn btn-teal" onclick="exportAll()" style="flex:1;">&#8595; Export .json</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" style="flex:1;">&#8593; Import</button>
         </div>
         <input type="file" id="importFile" accept=".json" onchange="importAll(event)">
         <div class="msg" id="importMsg"></div>
@@ -195,8 +281,8 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
       <div class="card">
         <div class="card-title">AI Scan settings</div>
         <div id="apiStatus"></div>
-        <div style="margin-top:8px;">
-          <button class="btn btn-warn" onclick="showApiOverlay()" style="font-size:13px;">&#9998; Update Groq API key</button>
+        <div style="margin-top:10px;">
+          <button class="btn btn-warn" onclick="showApiOverlay()">&#9998; Update Groq API key</button>
         </div>
       </div>
     </div>
@@ -205,7 +291,7 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
     <div id="tab-study" class="section">
       <div class="sec-head"><h2>Study</h2></div>
       <label>Choose deck</label>
-      <select id="studyDeckSel" onchange="studyDeckId=this.value;session.card=null;session.shown=false;renderStudy();" style="margin-bottom:12px;"></select>
+      <select id="studyDeckSel" onchange="studyDeckId=this.value;session.card=null;session.shown=false;renderStudy();" style="margin-bottom:14px;"></select>
       <div id="studyContent"></div>
     </div>
 
@@ -215,28 +301,38 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
       <div class="card">
         <label>Deck</label><select id="addDeckSel"></select>
         <label>Direction</label>
-        <select id="direction"><option value="en-np">English &#8594; Nepali</option><option value="np-en">Nepali &#8594; English</option></select>
-        <label>Word / &#x936;&#x92C;&#x94D;&#x926; *</label><input type="text" id="wordInput" placeholder="e.g. ephemeral">
-        <label>Translation (optional)</label><input type="text" id="transInput" placeholder="e.g. &#x915;&#x94D;&#x937;&#x923;&#x93F;&#x915;">
-        <label>English meaning (optional)</label><textarea id="meaningInput" placeholder="e.g. lasting for a very short time"></textarea>
-        <label>Nepali meaning / &#x905;&#x930;&#x94D;&#x925; (optional)</label><textarea id="npMeaningInput" placeholder="e.g. &#x25CC;&#x925;&#x94B;&#x930;&#x948; &#x938;&#x92E;&#x92F;&#x915;&#x94B; &#x932;&#x93E;&#x917;&#x93F; &#x92E;&#x93E;&#x924;&#x94D;&#x930; &#x930;&#x939;&#x928;&#x947;"></textarea>
-        <label>Example sentence (optional)</label><input type="text" id="exampleInput" placeholder="e.g. The joy was ephemeral.">
-        <div style="margin-top:12px;"><button class="btn btn-primary" onclick="addWord()">Add card</button></div>
+        <select id="direction">
+          <option value="en-np">English &#8594; Nepali</option>
+          <option value="np-en">Nepali &#8594; English</option>
+        </select>
+        <label>Word / &#x936;&#x92C;&#x94D;&#x926; *</label>
+        <input type="text" id="wordInput" placeholder="e.g. ephemeral">
+        <label>Translation (optional)</label>
+        <input type="text" id="transInput" placeholder="e.g. &#x915;&#x94D;&#x937;&#x923;&#x93F;&#x915;">
+        <label>English meaning (optional)</label>
+        <textarea id="meaningInput" placeholder="e.g. lasting for a very short time"></textarea>
+        <label>Nepali meaning / &#x905;&#x930;&#x94D;&#x925; (optional)</label>
+        <textarea id="npMeaningInput" placeholder="e.g. &#x925;&#x94B;&#x930;&#x948; &#x938;&#x92E;&#x92F;&#x915;&#x94B; &#x932;&#x93E;&#x917;&#x93F; &#x92E;&#x93E;&#x924;&#x94D;&#x930; &#x930;&#x939;&#x928;&#x947;"></textarea>
+        <label>Example sentence (optional)</label>
+        <input type="text" id="exampleInput" placeholder="e.g. The joy was ephemeral.">
+        <div style="margin-top:14px;"><button class="btn btn-primary" onclick="addWord()">Add card</button></div>
         <div class="msg" id="addMsg"></div>
       </div>
     </div>
 
     <!-- SCAN -->
     <div id="tab-camera" class="section">
-      <div class="sec-head"><h2>Scan copy</h2></div>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:10px;">Photo your handwritten vocab — AI detects words, you edit, then add to deck.</p>
+      <div class="sec-head">
+        <h2>Scan copy</h2>
+        <p>Photo your handwritten vocab — AI reads it and builds cards for you.</p>
+      </div>
       <label>Add to deck</label>
-      <select id="scanDeckSel" style="margin-bottom:12px;"></select>
+      <select id="scanDeckSel" style="margin-bottom:14px;"></select>
       <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleImage(event)">
       <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
-        <div style="font-size:34px;margin-bottom:6px;">&#128247;</div>
-        <p style="font-size:14px;">Tap to take photo</p>
-        <span style="font-size:12px;">or choose from library</span>
+        <div style="font-size:38px;margin-bottom:8px;">&#128247;</div>
+        <p style="font-size:16px;font-weight:600;color:var(--text2);">Tap to take photo</p>
+        <span style="font-size:13px;">or choose from library</span>
       </div>
       <div id="imagePreview"></div>
       <div id="aiStatus2"></div>
@@ -246,7 +342,7 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
     <div id="tab-words" class="section">
       <div class="sec-head"><h2>All words</h2></div>
       <label>Filter by deck</label>
-      <select id="filterDeckSel" onchange="filterDeckId=this.value;renderWordList();" style="margin-bottom:12px;"></select>
+      <select id="filterDeckSel" onchange="filterDeckId=this.value;renderWordList();" style="margin-bottom:14px;"></select>
       <div class="stats-row">
         <div class="stat"><div class="stat-n" id="totalCount">0</div><div class="stat-l">Total cards</div></div>
         <div class="stat"><div class="stat-n" id="learnedCount">0</div><div class="stat-l">Known</div></div>
@@ -271,27 +367,23 @@ function deckEmoji(id){const i=data.decks.findIndex(d=>d.id===id);return EMOJIS[
 function getCards(dId){return dId==='all'?data.cards:data.cards.filter(c=>c.deckId===dId);}
 function getApiKey(){return localStorage.getItem('groqKey')||'';}
 
-
-// API Key management
 function showApiOverlay(){document.getElementById('apiOverlay').style.display='flex';updateApiStatus();}
 function closeOverlay(){document.getElementById('apiOverlay').style.display='none';updateApiStatus();}
 function toggleKeyVis(){const i=document.getElementById('apiKeyInput');i.type=i.type==='password'?'text':'password';}
 function saveApiKey(){
   const key=document.getElementById('apiKeyInput').value.trim();
-  if(!key||!key.startsWith('gsk_')){showMsgEl('apiMsg','Please enter a valid Groq API key (starts with gsk_...)','err');return;}
+  if(!key||!key.startsWith('gsk_')){showMsgEl('apiMsg','Enter a valid Groq key (starts with gsk_...)','err');return;}
   localStorage.setItem('groqKey',key);
-  showMsgEl('apiMsg','API key saved!','ok');
+  showMsgEl('apiMsg','Key saved!','ok');
   setTimeout(()=>closeOverlay(),1000);
 }
 function updateApiStatus(){
-  const el=document.getElementById('apiStatus');
-  if(!el)return;
+  const el=document.getElementById('apiStatus');if(!el)return;
   const key=getApiKey();
-  if(key){el.innerHTML='<span style="color:var(--teal);font-size:13px;">&#10003; Groq API key saved — AI Scan is active</span>';}
-  else{el.innerHTML='<span style="color:var(--text3);font-size:13px;">No API key — tap below to set up free AI Scan</span>';}
+  if(key){el.innerHTML='<span style="color:var(--teal);font-size:14px;">&#10003; Groq key saved — AI Scan is ready</span>';}
+  else{el.innerHTML='<span style="color:var(--text3);font-size:14px;">No key set — tap below to enable free AI Scan</span>';}
 }
 
-// Backup reminder
 function checkBackupReminder(){
   const el=document.getElementById('backupReminder');if(!el)return;
   const last=parseInt(localStorage.getItem('lastExport')||'0');
@@ -299,7 +391,7 @@ function checkBackupReminder(){
   if(data.cards.length===0){el.innerHTML='';return;}
   if(now-last>7*24*60*60*1000){
     const daysAgo=last===0?'never':Math.floor((now-last)/86400000)+' days ago';
-    el.innerHTML='<div class="reminder-banner"><div style="font-size:22px;flex-shrink:0;">&#128190;</div><div><div class="reminder-title">Backup reminder</div><div class="reminder-sub">Last export: '+daysAgo+'. Export to keep your words safe!</div><div class="reminder-actions"><button class="r-btn r-btn-ok" onclick="exportAll();dismissReminder()">Export now</button><button class="r-btn r-btn-skip" onclick="dismissReminder()">Remind later</button></div></div></div>';
+    el.innerHTML='<div class="reminder-banner"><div style="font-size:24px;flex-shrink:0;">&#128190;</div><div><div class="reminder-title">Time to back up!</div><div class="reminder-sub">Last export: '+daysAgo+'.<br>Export your decks to keep your words safe.</div><div class="reminder-actions"><button class="r-btn r-btn-ok" onclick="exportAll();dismissReminder()">Export now</button><button class="r-btn r-btn-skip" onclick="dismissReminder()">Remind later</button></div></div></div>';
   }else{el.innerHTML='';}
 }
 function dismissReminder(){localStorage.setItem('lastExport',Date.now().toString());document.getElementById('backupReminder').innerHTML='';}
@@ -339,7 +431,7 @@ function renderDecks(){
     const total=data.cards.filter(c=>c.deckId===d.id).length;
     const known=data.cards.filter(c=>c.deckId===d.id&&c.known).length;
     const pct=total?Math.round(known/total*100):0;
-    return '<div class="deck-item '+(activeDeckId===d.id?'selected':'')+'" onclick="selectDeck(\''+d.id+'\')"><div class="deck-icon">'+deckEmoji(d.id)+'</div><div class="deck-info"><div class="deck-name">'+d.name+'</div><div class="deck-meta">'+total+' card'+(total!==1?'s':'')+' &middot; '+known+' known &middot; '+pct+'%</div><div class="deck-prog"><div class="deck-prog-fill" style="width:'+pct+'%"></div></div></div><button class="deck-del" onclick="deleteDeck(\''+d.id+'\',event)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>';
+    return '<div class="deck-item '+(activeDeckId===d.id?'selected':'')+'" onclick="selectDeck(\''+d.id+'\')"><div class="deck-icon">'+deckEmoji(d.id)+'</div><div class="deck-info"><div class="deck-name">'+d.name+'</div><div class="deck-meta">'+total+' card'+(total!==1?'s':'')+' &middot; '+known+' known &middot; '+pct+'%</div><div class="deck-prog"><div class="deck-prog-fill" style="width:'+pct+'%"></div></div></div><button class="deck-del" onclick="deleteDeck(\''+d.id+'\',event)" title="Delete deck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>';
   }).join('');
 }
 function selectDeck(id){activeDeckId=id;studyDeckId=id;renderDecks();showTab('study');}
@@ -349,18 +441,31 @@ function renderStudy(){
   if(data.decks.length===0){el.innerHTML='<div class="empty"><p>Create a deck first.</p></div>';return;}
   const pool=getCards(studyDeckId).filter(c=>!c.known);
   const total=getCards(studyDeckId).length;
-  if(total===0){el.innerHTML='<div class="empty"><p>No cards in this deck yet.</p></div>';return;}
-  if(pool.length===0){el.innerHTML='<div style="text-align:center;padding:28px 0;"><div style="font-size:44px;margin-bottom:10px;">&#127881;</div><div style="font-family:Lora,serif;font-size:18px;color:var(--cream);margin-bottom:4px;">All '+total+' words known!</div><div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Great work, AJ!</div><button class="btn btn-secondary" onclick="resetDeck()" style="max-width:180px;margin:0 auto;">Reset &amp; study again</button></div>';return;}
+  if(total===0){el.innerHTML='<div class="empty"><p>No cards in this deck yet.<br>Add some words first!</p></div>';return;}
+  if(pool.length===0){
+    el.innerHTML='<div style="text-align:center;padding:32px 0;"><div style="font-size:52px;margin-bottom:14px;">&#127881;</div><div style="font-family:Lora,serif;font-size:22px;color:var(--text);margin-bottom:6px;font-weight:600;">All '+total+' words known!</div><div style="font-size:15px;color:var(--text3);margin-bottom:20px;">Excellent work, AJ!</div><button class="btn btn-secondary" onclick="resetDeck()" style="max-width:200px;margin:0 auto;">Reset &amp; study again</button></div>';
+    return;
+  }
   if(!session.card||!pool.find(c=>c.id===session.card.id)){session.card=pool[Math.floor(Math.random()*pool.length)];session.shown=false;}
   const c=session.card;
   const pct=total?Math.round(((total-pool.length)/total)*100):0;
-  let html='<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div><div class="prog-label"><span>'+(total-pool.length)+'/'+total+' known</span><span>'+pct+'%</span></div>';
-  html+='<div class="fc" onclick="'+(session.shown?'':'revealCard()')+'"><span class="fc-lang '+(c.direction==='en-np'?'en':'np')+'">'+(c.direction==='en-np'?'EN&#8594;NP':'NP&#8594;EN')+'</span><span class="fc-rev">'+c.reviews+'&#215; reviewed</span><div class="fc-word">'+c.word+'</div>';
-  if(!session.shown){html+='<div class="fc-hint">tap to reveal &#8594;</div>';}
-  else{html+='<div class="fc-divider"></div><div style="width:100%;">';if(c.translation)html+='<div class="answer-row"><span class="ak">Translation</span><span class="av">'+c.translation+'</span></div>';if(c.meaning)html+='<div class="answer-row"><span class="ak">Meaning (EN)</span><span class="av">'+c.meaning+'</span></div>';if(c.npMeaning)html+='<div class="answer-row"><span class="ak">&#2$35;&#2930;&#2509;&#2925; (NP)</span><span class="av">'+c.npMeaning+'</span></div>';if(c.example)html+='<div class="answer-row"><span class="ak">Example</span><span class="av" style="font-style:italic;">'+c.example+'</span></div>';html+='</div>';}
+  let html='<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div><div class="prog-label"><span>'+(total-pool.length)+' / '+total+' known</span><span>'+pct+'%</span></div>';
+  html+='<div class="fc" onclick="'+(session.shown?'':'revealCard()')+'"><span class="fc-lang '+(c.direction==='en-np'?'en':'np')+'">'+(c.direction==='en-np'?'EN &#8594; NP':'NP &#8594; EN')+'</span><span class="fc-rev">'+c.reviews+'&#215; reviewed</span><div class="fc-word">'+c.word+'</div>';
+  if(!session.shown){html+='<div class="fc-hint">tap to reveal &rarr;</div>';}
+  else{
+    html+='<div class="fc-divider"></div><div style="width:100%;">';
+    if(c.translation)html+='<div class="answer-row"><span class="ak">Translation</span><span class="av">'+c.translation+'</span></div>';
+    if(c.meaning)html+='<div class="answer-row"><span class="ak">Meaning (EN)</span><span class="av">'+c.meaning+'</span></div>';
+    if(c.npMeaning)html+='<div class="answer-row"><span class="ak">&#2$35;&#2930;&#2509;&#2925; (NP)</span><span class="av">'+c.npMeaning+'</span></div>';
+    if(c.example)html+='<div class="answer-row"><span class="ak">Example</span><span class="av" style="font-style:italic;font-weight:400;">'+c.example+'</span></div>';
+    html+='</div>';
+  }
   html+='</div>';
-  if(session.shown){html+='<div class="btn-row"><button class="btn btn-teal" onclick="markCard(true)">&#10003; Know it</button><button class="btn btn-rose" onclick="markCard(false)">&#8635; Again</button></div>';}
-  else{html+='<button class="btn btn-secondary" onclick="revealCard()" style="margin-top:4px;">Reveal answer</button>';}
+  if(session.shown){
+    html+='<div class="btn-row"><button class="btn btn-teal" onclick="markCard(true)">&#10003; Know it</button><button class="btn btn-rose" onclick="markCard(false)">&#8635; Again</button></div>';
+  }else{
+    html+='<button class="btn btn-secondary" onclick="revealCard()" style="margin-top:6px;">Reveal answer</button>';
+  }
   el.innerHTML=html;
 }
 function revealCard(){if(!session.shown){session.shown=true;if(session.card){session.card.reviews++;save();}renderStudy();}}
@@ -373,24 +478,22 @@ function addWord(){
   if(!deckId){showMsg('addMsg','Select a deck first','err');return;}
   if(!w){showMsg('addMsg','Enter a word first','err');return;}
   data.cards.push({id:Date.now().toString(),deckId,direction:document.getElementById('direction').value,word:w,translation:document.getElementById('transInput').value.trim(),meaning:document.getElementById('meaningInput').value.trim(),npMeaning:document.getElementById('npMeaningInput').value.trim(),example:document.getElementById('exampleInput').value.trim(),known:false,reviews:0});
-  save();['wordInput','transInput','meaningInput','npMeaningInput','exampleInput'].forEach(id=>document.getElementById(id).value='');showMsg('addMsg','Card added!','ok');
+  save();
+  ['wordInput','transInput','meaningInput','npMeaningInput','exampleInput'].forEach(id=>document.getElementById(id).value='');
+  showMsg('addMsg','Card added!','ok');
 }
 
-// SCAN with Groq
 async function handleImage(e){
   const file=e.target.files[0];if(!file)return;
   const deckId=document.getElementById('scanDeckSel').value;
   if(!deckId){document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--rose);">Select a deck first.</div>';return;}
   const key=getApiKey();
-  if(!key){
-    document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--saffron);">No API key set. <span style="text-decoration:underline;cursor:pointer;" onclick="showApiOverlay()">Set up free Groq key</span></div>';
-    return;
-  }
+  if(!key){document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--amber);">No API key. <span style="text-decoration:underline;cursor:pointer;" onclick="showApiOverlay()">Set up free Groq key</span></div>';return;}
   const reader=new FileReader();
   reader.onload=async function(ev){
     const b64=ev.target.result.split(',')[1];
     const mime=file.type||'image/jpeg';
-    document.getElementById('imagePreview').innerHTML='<img src="'+ev.target.result+'" style="width:100%;border-radius:var(--radius);margin:10px 0;">';
+    document.getElementById('imagePreview').innerHTML='<img src="'+ev.target.result+'" style="width:100%;border-radius:var(--radius);margin:10px 0;border:1px solid var(--border);">';
     document.getElementById('aiStatus2').innerHTML='<div class="ai-box"><span class="loading">AI is reading your words</span></div>';
     try{
       const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
@@ -409,34 +512,31 @@ async function handleImage(e){
       if(d.error){throw new Error(d.error.message||JSON.stringify(d.error));}
       const raw=d.choices[0].message.content;
       const detected=JSON.parse(raw.replace(/```json|```/g,'').trim());
-      if(!Array.isArray(detected)||detected.length===0)throw new Error('none');
+      if(!Array.isArray(detected)||detected.length===0)throw new Error('No words found');
       scanDeckIdForEdit=deckId;
       editedWords=detected.map((w,i)=>({...w,_id:i,_include:true}));
       openEditModal();
       document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--teal);">&#10003; '+detected.length+' word'+(detected.length!==1?'s':'')+' detected! Review and edit below.</div>';
     }catch(err){
       console.error(err);
-      document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--rose);">Could not detect words. Try a clearer photo with good lighting.<br><small style="color:var(--text3);">'+err.message+'</small></div>';
+      document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--rose);">Could not detect words. Try a clearer photo.<br><small style="color:var(--text3);">'+err.message+'</small></div>';
     }
   };
   reader.readAsDataURL(file);
 }
 
-// Edit modal
 function openEditModal(){
   const el=document.getElementById('editCardsList');
   el.innerHTML=editedWords.map((w,i)=>'<div class="edit-card" id="ecard_'+i+'"><div class="edit-card-head"><span class="edit-word-num">Word '+(i+1)+'</span><button class="edit-remove" onclick="removeEditWord('+i+')" title="Remove">&#10005;</button></div><div class="edit-field"><label>Word *</label><input type="text" value="'+esc(w.word||'')+'" onchange="editedWords['+i+'].word=this.value"></div><div class="edit-field"><label>Translation</label><input type="text" value="'+esc(w.translation||'')+'" placeholder="optional" onchange="editedWords['+i+'].translation=this.value"></div><div class="edit-field"><label>English meaning</label><input type="text" value="'+esc(w.meaning||'')+'" placeholder="optional" onchange="editedWords['+i+'].meaning=this.value"></div><div class="edit-field"><label>Nepali meaning</label><input type="text" value="'+esc(w.npMeaning||'')+'" placeholder="optional" onchange="editedWords['+i+'].npMeaning=this.value"></div><div class="edit-field"><label>Example</label><input type="text" value="'+esc(w.example||'')+'" placeholder="optional" onchange="editedWords['+i+'].example=this.value"></div></div>').join('');
   document.getElementById('editModal').style.display='flex';
 }
-function esc(s){return s.replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function removeEditWord(i){editedWords[i]._include=false;const el=document.getElementById('ecard_'+i);if(el){el.style.opacity='0.3';el.style.pointerEvents='none';}}
+function esc(s){return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function removeEditWord(i){editedWords[i]._include=false;const el=document.getElementById('ecard_'+i);if(el){el.style.opacity='0.35';el.style.pointerEvents='none';}}
 function closeEditModal(){document.getElementById('editModal').style.display='none';}
 function addAllEdited(){
   const toAdd=editedWords.filter(w=>w._include&&w.word&&w.word.trim());
   if(toAdd.length===0){showMsgEl('editMsg','No words to add','err');return;}
-  toAdd.forEach((w,i)=>{
-    data.cards.push({id:(Date.now()+i).toString(),deckId:scanDeckIdForEdit,direction:w.direction||'en-np',word:w.word.trim(),translation:w.translation||'',meaning:w.meaning||'',npMeaning:w.npMeaning||'',example:w.example||'',known:false,reviews:0});
-  });
+  toAdd.forEach((w,i)=>{data.cards.push({id:(Date.now()+i).toString(),deckId:scanDeckIdForEdit,direction:w.direction||'en-np',word:w.word.trim(),translation:w.translation||'',meaning:w.meaning||'',npMeaning:w.npMeaning||'',example:w.example||'',known:false,reviews:0});});
   save();
   showMsgEl('editMsg',toAdd.length+' cards added!','ok');
   setTimeout(()=>{closeEditModal();showTab('study');},1200);
@@ -448,9 +548,12 @@ function renderWordList(){
   document.getElementById('learnedCount').textContent=filtered.filter(c=>c.known).length;
   const el=document.getElementById('wordList');
   if(filtered.length===0){el.innerHTML='<div class="empty"><p>No words yet</p></div>';return;}
-  el.innerHTML=filtered.map(c=>{const deck=data.decks.find(d=>d.id===c.deckId);return '<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><div style="flex:1;min-width:0;"><span style="font-weight:500;font-size:14px;color:var(--cream);">'+c.word+'</span>'+(c.translation?'<span style="font-size:12px;color:var(--text3);margin-left:5px;">&#8594; '+c.translation+'</span>':'')+'<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap;"><span style="font-size:11px;padding:1px 7px;border-radius:20px;'+(c.direction==='en-np'?'background:rgba(46,196,165,0.12);color:var(--teal);':'background:rgba(232,151,58,0.12);color:var(--saffron);')+'">'+(c.direction==='en-np'?'EN&#8594;NP':'NP&#8594;EN')+'</span>'+(c.known?'<span style="font-size:11px;padding:1px 7px;border-radius:20px;background:rgba(46,196,165,0.12);color:var(--teal);">&#10003; Known</span>':'')+(deck?'<span style="font-size:11px;color:var(--text3);">'+deckEmoji(deck.id)+' '+deck.name+'</span>':'')+'</div></div><button onclick="deleteCard(\''+c.id+'\')" style="width:28px;height:28px;border:none;background:rgba(224,92,110,0.1);border-radius:7px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div>';}).join('');
+  el.innerHTML=filtered.map(c=>{
+    const deck=data.decks.find(d=>d.id===c.deckId);
+    return '<div class="word-row"><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:16px;color:var(--text);">'+c.word+(c.translation?'<span style="font-size:14px;color:var(--text3);font-weight:400;margin-left:6px;">&#8594; '+c.translation+'</span>':'')+'</div><div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;"><span class="tag '+(c.direction==='en-np'?'tag-en':'tag-np')+'">'+(c.direction==='en-np'?'EN&#8594;NP':'NP&#8594;EN')+'</span>'+(c.known?'<span class="tag tag-known">&#10003; Known</span>':'')+(deck?'<span style="font-size:12px;color:var(--text3);">'+deckEmoji(deck.id)+' '+deck.name+'</span>':'')+'</div></div><button onclick="deleteCard(\''+c.id+'\')" style="width:30px;height:30px;border:none;background:var(--rose-light);border-radius:8px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(176,48,64,0.15);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div>';
+  }).join('');
 }
-function deleteCard(id){data.cards=data.cards.filter(c=>c.id!==id);save();renderWordList();}
+function deleteCard(id){if(!confirm('Delete this card?'))return;data.cards=data.cards.filter(c=>c.id!==id);save();renderWordList();}
 
 function exportAll(){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
@@ -462,19 +565,28 @@ function exportAll(){
 function importAll(e){
   const file=e.target.files[0];if(!file)return;
   const r=new FileReader();
-  r.onload=function(ev){try{const imp=JSON.parse(ev.target.result);if(!imp.decks||!imp.cards)throw new Error();const existD=new Set(data.decks.map(d=>d.id));const existC=new Set(data.cards.map(c=>c.id));imp.decks.forEach(d=>{if(!existD.has(d.id))data.decks.push(d);});imp.cards.forEach(c=>{if(!existC.has(c.id))data.cards.push(c);});save();renderDecks();showMsg('importMsg','Imported '+imp.decks.length+' deck(s), '+imp.cards.length+' card(s)','ok');}catch(err){showMsg('importMsg','Invalid file','err');}};
+  r.onload=function(ev){
+    try{
+      const imp=JSON.parse(ev.target.result);
+      if(!imp.decks||!imp.cards)throw new Error();
+      const existD=new Set(data.decks.map(d=>d.id));
+      const existC=new Set(data.cards.map(c=>c.id));
+      imp.decks.forEach(d=>{if(!existD.has(d.id))data.decks.push(d);});
+      imp.cards.forEach(c=>{if(!existC.has(c.id))data.cards.push(c);});
+      save();renderDecks();
+      showMsg('importMsg','Imported '+imp.decks.length+' deck(s), '+imp.cards.length+' card(s)','ok');
+    }catch(err){showMsg('importMsg','Invalid file','err');}
+  };
   r.readAsText(file);
 }
 
 function showMsg(id,msg,type){const el=document.getElementById(id);if(!el)return;el.className='msg '+type;el.textContent=msg;setTimeout(()=>el.textContent='',3000);}
 function showMsgEl(id,msg,type){const el=document.getElementById(id);if(!el)return;el.className='msg '+type;el.textContent=msg;setTimeout(()=>el.textContent='',3000);}
 
-// Init
 updateBadge();
 renderDecks();
 checkBackupReminder();
 updateApiStatus();
-// Show API setup on first visit if no key
 if(!getApiKey()){setTimeout(()=>showApiOverlay(),800);}
 </script>
 </body>
