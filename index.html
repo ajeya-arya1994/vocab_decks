@@ -123,15 +123,15 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
 <div class="overlay" id="apiOverlay" style="display:none;">
   <div class="overlay-icon">🔑</div>
   <div class="overlay-title">Set up AI Scan</div>
-  <div class="overlay-sub">To scan your handwritten vocab, you need a free Google Gemini API key. It's completely free — no credit card needed.</div>
+  <div class="overlay-sub">To scan your handwritten vocab, you need a free Groq API key. Completely free — no credit card needed.</div>
   <div class="overlay-steps" style="width:100%;">
-    <div class="overlay-step"><span>1.</span> Open <strong style="color:var(--cream)">aistudio.google.com</strong></div>
-    <div class="overlay-step"><span>2.</span> Sign in with your Google account</div>
-    <div class="overlay-step"><span>3.</span> Tap <strong style="color:var(--cream)">Get API key → Create API key</strong></div>
+    <div class="overlay-step"><span>1.</span> Open <strong style="color:var(--cream)">console.groq.com</strong></div>
+    <div class="overlay-step"><span>2.</span> Sign up free with Google or email</div>
+    <div class="overlay-step"><span>3.</span> Tap <strong style="color:var(--cream)">API Keys → Create API key</strong></div>
     <div class="overlay-step"><span>4.</span> Copy and paste it below</div>
   </div>
   <div class="key-input-wrap">
-    <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key here">
+    <input type="password" id="apiKeyInput" placeholder="Paste your Groq API key here">
     <button class="key-toggle" onclick="toggleKeyVis()">👁</button>
   </div>
   <button class="btn btn-primary" style="width:100%;" onclick="saveApiKey()">Save &amp; Start Scanning</button>
@@ -196,7 +196,7 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
         <div class="card-title">AI Scan settings</div>
         <div id="apiStatus"></div>
         <div style="margin-top:8px;">
-          <button class="btn btn-warn" onclick="showApiOverlay()" style="font-size:13px;">&#9998; Update Gemini API key</button>
+          <button class="btn btn-warn" onclick="showApiOverlay()" style="font-size:13px;">&#9998; Update Groq API key</button>
         </div>
       </div>
     </div>
@@ -269,7 +269,8 @@ function save(){localStorage.setItem('vocabApp3',JSON.stringify(data));updateBad
 function updateBadge(){document.getElementById('headerBadge').textContent=data.cards.length+' word'+(data.cards.length!==1?'s':'');}
 function deckEmoji(id){const i=data.decks.findIndex(d=>d.id===id);return EMOJIS[i%EMOJIS.length];}
 function getCards(dId){return dId==='all'?data.cards:data.cards.filter(c=>c.deckId===dId);}
-function getApiKey(){return localStorage.getItem('geminiKey')||'';}
+function getApiKey(){return localStorage.getItem('groqKey')||'';}
+
 
 // API Key management
 function showApiOverlay(){document.getElementById('apiOverlay').style.display='flex';updateApiStatus();}
@@ -277,8 +278,8 @@ function closeOverlay(){document.getElementById('apiOverlay').style.display='non
 function toggleKeyVis(){const i=document.getElementById('apiKeyInput');i.type=i.type==='password'?'text':'password';}
 function saveApiKey(){
   const key=document.getElementById('apiKeyInput').value.trim();
-  if(!key||!key.startsWith('AI')){showMsgEl('apiMsg','Please enter a valid Gemini API key (starts with AI...)','err');return;}
-  localStorage.setItem('geminiKey',key);
+  if(!key||!key.startsWith('gsk_')){showMsgEl('apiMsg','Please enter a valid Groq API key (starts with gsk_...)','err');return;}
+  localStorage.setItem('groqKey',key);
   showMsgEl('apiMsg','API key saved!','ok');
   setTimeout(()=>closeOverlay(),1000);
 }
@@ -286,7 +287,7 @@ function updateApiStatus(){
   const el=document.getElementById('apiStatus');
   if(!el)return;
   const key=getApiKey();
-  if(key){el.innerHTML='<span style="color:var(--teal);font-size:13px;">&#10003; Gemini API key saved — AI Scan is active</span>';}
+  if(key){el.innerHTML='<span style="color:var(--teal);font-size:13px;">&#10003; Groq API key saved — AI Scan is active</span>';}
   else{el.innerHTML='<span style="color:var(--text3);font-size:13px;">No API key — tap below to set up free AI Scan</span>';}
 }
 
@@ -375,14 +376,14 @@ function addWord(){
   save();['wordInput','transInput','meaningInput','npMeaningInput','exampleInput'].forEach(id=>document.getElementById(id).value='');showMsg('addMsg','Card added!','ok');
 }
 
-// SCAN with Gemini
+// SCAN with Groq
 async function handleImage(e){
   const file=e.target.files[0];if(!file)return;
   const deckId=document.getElementById('scanDeckSel').value;
   if(!deckId){document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--rose);">Select a deck first.</div>';return;}
   const key=getApiKey();
   if(!key){
-    document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--saffron);">No API key set. <span style="text-decoration:underline;cursor:pointer;" onclick="showApiOverlay()">Set up free Gemini key</span></div>';
+    document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--saffron);">No API key set. <span style="text-decoration:underline;cursor:pointer;" onclick="showApiOverlay()">Set up free Groq key</span></div>';
     return;
   }
   const reader=new FileReader();
@@ -392,17 +393,21 @@ async function handleImage(e){
     document.getElementById('imagePreview').innerHTML='<img src="'+ev.target.result+'" style="width:100%;border-radius:var(--radius);margin:10px 0;">';
     document.getElementById('aiStatus2').innerHTML='<div class="ai-box"><span class="loading">AI is reading your words</span></div>';
     try{
-      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{
+      const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
         method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({contents:[{parts:[
-          {inline_data:{mime_type:mime,data:b64}},
-          {text:'Extract all vocabulary words or phrases from this handwritten image. For each word return a JSON array of objects with these fields (only "word" is required, rest optional): word (string), translation (string), meaning (string - English definition), npMeaning (string - Nepali meaning), example (string), direction (string - "en-np" if word is English, "np-en" if word is Nepali). Auto-detect language. Return ONLY a valid JSON array. No markdown, no explanation, no backticks.'}
-        ]}]})
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+        body:JSON.stringify({
+          model:'meta-llama/llama-4-scout-17b-16e-instruct',
+          max_tokens:2000,
+          messages:[{role:'user',content:[
+            {type:'image_url',image_url:{url:'data:'+mime+';base64,'+b64}},
+            {type:'text',text:'Extract all vocabulary words or phrases from this handwritten image. For each word return a JSON array of objects with these fields (only "word" is required, rest optional): word (string), translation (string), meaning (string - English definition), npMeaning (string - Nepali meaning), example (string), direction (string - "en-np" if word is English, "np-en" if word is Nepali). Auto-detect language. Return ONLY a valid JSON array. No markdown, no explanation, no backticks.'}
+          ]}]
+        })
       });
       const d=await resp.json();
-      if(d.error){throw new Error(d.error.message);}
-      const raw=d.candidates[0].content.parts[0].text;
+      if(d.error){throw new Error(d.error.message||JSON.stringify(d.error));}
+      const raw=d.choices[0].message.content;
       const detected=JSON.parse(raw.replace(/```json|```/g,'').trim());
       if(!Array.isArray(detected)||detected.length===0)throw new Error('none');
       scanDeckIdForEdit=deckId;
