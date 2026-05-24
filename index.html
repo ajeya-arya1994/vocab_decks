@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Vocab Decks</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -35,9 +36,9 @@ body{background:var(--navy);font-family:'DM Sans',sans-serif;color:var(--text);h
 .deck-prog-fill{height:100%;border-radius:2px;background:var(--saffron);transition:width 0.4s;}
 .deck-del{width:30px;height:30px;border:none;background:rgba(224,92,110,0.1);border-radius:8px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 label{display:block;font-size:11px;color:var(--text3);margin-bottom:4px;margin-top:10px;letter-spacing:0.3px;text-transform:uppercase;}
-input[type=text],select,textarea{width:100%;background:var(--input-bg);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
-input[type=text]:focus,select:focus,textarea:focus{border-color:var(--saffron);}
-input[type=text]::placeholder,textarea::placeholder{color:var(--text3);}
+input[type=text],input[type=password],select,textarea{width:100%;background:var(--input-bg);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
+input[type=text]:focus,input[type=password]:focus,select:focus,textarea:focus{border-color:var(--saffron);}
+input::placeholder,textarea::placeholder{color:var(--text3);}
 select option{background:var(--navy2);}
 textarea{min-height:68px;resize:vertical;line-height:1.5;}
 .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.18s;}
@@ -46,6 +47,7 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
 .btn-secondary{background:var(--navy3);color:var(--text2);border:1px solid rgba(255,255,255,0.1);}
 .btn-teal{background:rgba(46,196,165,0.15);color:var(--teal);border:1px solid rgba(46,196,165,0.25);}
 .btn-rose{background:rgba(224,92,110,0.12);color:var(--rose);border:1px solid rgba(224,92,110,0.2);}
+.btn-warn{background:rgba(232,151,58,0.15);color:var(--saffron);border:1px solid rgba(232,151,58,0.3);}
 .btn-row{display:flex;gap:8px;margin-top:10px;}
 .btn-row .btn{flex:1;}
 .prog-bar{height:4px;background:var(--navy3);border-radius:2px;margin-bottom:8px;overflow:hidden;}
@@ -69,9 +71,8 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
 .stat-n{font-family:'Lora',serif;font-size:26px;color:var(--cream);}
 .stat-l{font-size:11px;color:var(--text3);margin-top:1px;}
 .drop-zone{border:1.5px dashed rgba(232,151,58,0.35);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;color:var(--text3);margin-bottom:10px;}
-.ai-box{background:var(--navy3);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text2);margin:8px 0;max-height:140px;overflow-y:auto;}
-.chip{display:inline-flex;align-items:center;gap:3px;font-size:12px;padding:4px 11px;border:1px solid rgba(232,151,58,0.3);border-radius:20px;margin:3px;cursor:pointer;color:var(--saffron);background:rgba(232,151,58,0.08);}
-.chip.added{opacity:0.3;pointer-events:none;}
+.drop-zone:active{background:rgba(232,151,58,0.05);}
+.ai-box{background:var(--navy3);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text2);margin:8px 0;}
 .empty{text-align:center;padding:28px 0;color:var(--text3);}
 .empty p{font-size:13px;}
 .msg{font-size:12px;text-align:center;margin-top:6px;min-height:16px;}
@@ -89,13 +90,75 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
 .r-btn{font-size:12px;padding:5px 12px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;}
 .r-btn-ok{background:var(--saffron);color:var(--navy);}
 .r-btn-skip{background:transparent;color:var(--text3);border:1px solid rgba(255,255,255,0.1);}
+
+/* API Key setup overlay */
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+.overlay-icon{font-size:48px;margin-bottom:16px;}
+.overlay-title{font-family:'Lora',serif;font-size:22px;color:var(--cream);margin-bottom:8px;}
+.overlay-sub{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:24px;}
+.overlay-steps{background:var(--card-bg);border-radius:var(--radius);padding:14px;margin-bottom:20px;text-align:left;width:100%;}
+.overlay-step{font-size:13px;color:var(--text2);padding:5px 0;display:flex;gap:8px;align-items:flex-start;}
+.overlay-step span{color:var(--saffron);font-weight:500;flex-shrink:0;}
+.key-input-wrap{position:relative;width:100%;margin-bottom:12px;}
+.key-input-wrap input{padding-right:44px;}
+.key-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;}
+.skip-link{font-size:12px;color:var(--text3);margin-top:12px;cursor:pointer;text-decoration:underline;}
+
+/* Edit modal */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end;}
+.modal{background:var(--navy2);border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-height:85vh;overflow-y:auto;}
+.modal-title{font-family:'Lora',serif;font-size:16px;color:var(--cream);margin-bottom:14px;}
+.edit-card{background:var(--navy3);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.06);}
+.edit-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.edit-word-num{font-size:11px;color:var(--text3);}
+.edit-remove{width:24px;height:24px;border:none;background:rgba(224,92,110,0.15);border-radius:6px;color:var(--rose);cursor:pointer;font-size:14px;}
+.edit-field{margin-bottom:6px;}
+.edit-field label{font-size:10px;margin-top:4px;}
+.edit-field input{padding:7px 10px;font-size:13px;}
 </style>
 </head>
 <body>
+
+<!-- API Key Setup Overlay -->
+<div class="overlay" id="apiOverlay" style="display:none;">
+  <div class="overlay-icon">🔑</div>
+  <div class="overlay-title">Set up AI Scan</div>
+  <div class="overlay-sub">To scan your handwritten vocab, you need a free Google Gemini API key. It's completely free — no credit card needed.</div>
+  <div class="overlay-steps" style="width:100%;">
+    <div class="overlay-step"><span>1.</span> Open <strong style="color:var(--cream)">aistudio.google.com</strong></div>
+    <div class="overlay-step"><span>2.</span> Sign in with your Google account</div>
+    <div class="overlay-step"><span>3.</span> Tap <strong style="color:var(--cream)">Get API key → Create API key</strong></div>
+    <div class="overlay-step"><span>4.</span> Copy and paste it below</div>
+  </div>
+  <div class="key-input-wrap">
+    <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key here">
+    <button class="key-toggle" onclick="toggleKeyVis()">👁</button>
+  </div>
+  <button class="btn btn-primary" style="width:100%;" onclick="saveApiKey()">Save &amp; Start Scanning</button>
+  <div class="msg" id="apiMsg" style="margin-top:8px;"></div>
+  <div class="skip-link" onclick="closeOverlay()">Skip for now — I'll add words manually</div>
+</div>
+
+<!-- Edit Detected Words Modal -->
+<div class="modal-overlay" id="editModal" style="display:none;">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div class="modal-title">Edit detected words</div>
+      <button onclick="closeEditModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:12px;">Review and edit each word before adding to your deck.</p>
+    <div id="editCardsList"></div>
+    <div style="margin-top:12px;">
+      <button class="btn btn-primary" onclick="addAllEdited()">Add all to deck</button>
+      <div class="msg" id="editMsg" style="margin-top:6px;"></div>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <div class="header">
     <div class="header-top">
-      <div><div class="header-title">Vocab Decks</div><div class="header-sub">English ↔ Nepali · AI powered</div></div>
+      <div><div class="header-title">Vocab Decks</div><div class="header-sub">English &#x21d4; Nepali &middot; AI powered</div></div>
       <div class="header-badge" id="headerBadge">0 words</div>
     </div>
   </div>
@@ -107,6 +170,8 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
     <button class="nav-btn" onclick="showTab('words')" id="nav-words"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>Words</button>
   </div>
   <div class="content">
+
+    <!-- DECKS -->
     <div id="tab-decks" class="section active">
       <div id="backupReminder"></div>
       <div class="sec-head"><h2>My Decks</h2></div>
@@ -121,47 +186,63 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
       <div class="card">
         <div class="card-title">Backup &amp; restore</div>
         <div class="btn-row">
-          <button class="btn btn-teal" onclick="exportAll()" style="flex:1;font-size:13px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export .json</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" style="flex:1;font-size:13px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import</button>
+          <button class="btn btn-teal" onclick="exportAll()" style="flex:1;font-size:13px;">&#8595; Export .json</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" style="flex:1;font-size:13px;">&#8593; Import</button>
         </div>
         <input type="file" id="importFile" accept=".json" onchange="importAll(event)">
         <div class="msg" id="importMsg"></div>
       </div>
+      <div class="card">
+        <div class="card-title">AI Scan settings</div>
+        <div id="apiStatus"></div>
+        <div style="margin-top:8px;">
+          <button class="btn btn-warn" onclick="showApiOverlay()" style="font-size:13px;">&#9998; Update Gemini API key</button>
+        </div>
+      </div>
     </div>
+
+    <!-- STUDY -->
     <div id="tab-study" class="section">
       <div class="sec-head"><h2>Study</h2></div>
       <label>Choose deck</label>
       <select id="studyDeckSel" onchange="studyDeckId=this.value;session.card=null;session.shown=false;renderStudy();" style="margin-bottom:12px;"></select>
       <div id="studyContent"></div>
     </div>
+
+    <!-- ADD -->
     <div id="tab-add" class="section">
       <div class="sec-head"><h2>Add word</h2></div>
       <div class="card">
         <label>Deck</label><select id="addDeckSel"></select>
         <label>Direction</label>
-        <select id="direction"><option value="en-np">English → Nepali</option><option value="np-en">Nepali → English</option></select>
-        <label>Word / शब्द *</label><input type="text" id="wordInput" placeholder="e.g. ephemeral">
-        <label>Translation (optional)</label><input type="text" id="transInput" placeholder="e.g. क्षणिक">
+        <select id="direction"><option value="en-np">English &#8594; Nepali</option><option value="np-en">Nepali &#8594; English</option></select>
+        <label>Word / &#x936;&#x92C;&#x94D;&#x926; *</label><input type="text" id="wordInput" placeholder="e.g. ephemeral">
+        <label>Translation (optional)</label><input type="text" id="transInput" placeholder="e.g. &#x915;&#x94D;&#x937;&#x923;&#x93F;&#x915;">
         <label>English meaning (optional)</label><textarea id="meaningInput" placeholder="e.g. lasting for a very short time"></textarea>
-        <label>Nepali meaning / अर्थ (optional)</label><textarea id="npMeaningInput" placeholder="e.g. थोरै समयको लागि मात्र रहने"></textarea>
+        <label>Nepali meaning / &#x905;&#x930;&#x94D;&#x925; (optional)</label><textarea id="npMeaningInput" placeholder="e.g. &#x25CC;&#x925;&#x94B;&#x930;&#x948; &#x938;&#x92E;&#x92F;&#x915;&#x94B; &#x932;&#x93E;&#x917;&#x93F; &#x92E;&#x93E;&#x924;&#x94D;&#x930; &#x930;&#x939;&#x928;&#x947;"></textarea>
         <label>Example sentence (optional)</label><input type="text" id="exampleInput" placeholder="e.g. The joy was ephemeral.">
         <div style="margin-top:12px;"><button class="btn btn-primary" onclick="addWord()">Add card</button></div>
         <div class="msg" id="addMsg"></div>
       </div>
     </div>
+
+    <!-- SCAN -->
     <div id="tab-camera" class="section">
       <div class="sec-head"><h2>Scan copy</h2></div>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:10px;">Photo your handwritten vocab — AI detects words and builds cards.</p>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:10px;">Photo your handwritten vocab — AI detects words, you edit, then add to deck.</p>
       <label>Add to deck</label>
       <select id="scanDeckSel" style="margin-bottom:12px;"></select>
       <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleImage(event)">
       <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
-        <div style="font-size:34px;margin-bottom:6px;">📷</div>
+        <div style="font-size:34px;margin-bottom:6px;">&#128247;</div>
         <p style="font-size:14px;">Tap to take photo</p>
         <span style="font-size:12px;">or choose from library</span>
       </div>
-      <div id="imagePreview"></div><div id="aiStatus"></div><div id="detectedWords"></div>
+      <div id="imagePreview"></div>
+      <div id="aiStatus2"></div>
     </div>
+
+    <!-- WORDS -->
     <div id="tab-words" class="section">
       <div class="sec-head"><h2>All words</h2></div>
       <label>Filter by deck</label>
@@ -172,17 +253,44 @@ textarea{min-height:68px;resize:vertical;line-height:1.5;}
       </div>
       <div class="card"><div id="wordList"></div></div>
     </div>
+
   </div>
 </div>
+
 <script>
 let data=JSON.parse(localStorage.getItem('vocabApp3')||'{"decks":[],"cards":[]}');
 let studyDeckId='all',filterDeckId='all',activeDeckId=null;
 let session={card:null,shown:false};
+let editedWords=[];
+let scanDeckIdForEdit=null;
 const EMOJIS=['📗','📘','📙','📕','📓','📔','📒','📃','📜'];
+
 function save(){localStorage.setItem('vocabApp3',JSON.stringify(data));updateBadge();}
 function updateBadge(){document.getElementById('headerBadge').textContent=data.cards.length+' word'+(data.cards.length!==1?'s':'');}
 function deckEmoji(id){const i=data.decks.findIndex(d=>d.id===id);return EMOJIS[i%EMOJIS.length];}
 function getCards(dId){return dId==='all'?data.cards:data.cards.filter(c=>c.deckId===dId);}
+function getApiKey(){return localStorage.getItem('geminiKey')||'';}
+
+// API Key management
+function showApiOverlay(){document.getElementById('apiOverlay').style.display='flex';updateApiStatus();}
+function closeOverlay(){document.getElementById('apiOverlay').style.display='none';updateApiStatus();}
+function toggleKeyVis(){const i=document.getElementById('apiKeyInput');i.type=i.type==='password'?'text':'password';}
+function saveApiKey(){
+  const key=document.getElementById('apiKeyInput').value.trim();
+  if(!key||!key.startsWith('AI')){showMsgEl('apiMsg','Please enter a valid Gemini API key (starts with AI...)','err');return;}
+  localStorage.setItem('geminiKey',key);
+  showMsgEl('apiMsg','API key saved!','ok');
+  setTimeout(()=>closeOverlay(),1000);
+}
+function updateApiStatus(){
+  const el=document.getElementById('apiStatus');
+  if(!el)return;
+  const key=getApiKey();
+  if(key){el.innerHTML='<span style="color:var(--teal);font-size:13px;">&#10003; Gemini API key saved — AI Scan is active</span>';}
+  else{el.innerHTML='<span style="color:var(--text3);font-size:13px;">No API key — tap below to set up free AI Scan</span>';}
+}
+
+// Backup reminder
 function checkBackupReminder(){
   const el=document.getElementById('backupReminder');if(!el)return;
   const last=parseInt(localStorage.getItem('lastExport')||'0');
@@ -190,24 +298,27 @@ function checkBackupReminder(){
   if(data.cards.length===0){el.innerHTML='';return;}
   if(now-last>7*24*60*60*1000){
     const daysAgo=last===0?'never':Math.floor((now-last)/86400000)+' days ago';
-    el.innerHTML='<div class="reminder-banner"><div style="font-size:22px;flex-shrink:0;">💾</div><div><div class="reminder-title">Backup reminder</div><div class="reminder-sub">Last export: '+daysAgo+'. Export so you never lose your words!</div><div class="reminder-actions"><button class="r-btn r-btn-ok" onclick="exportAll();dismissReminder()">Export now</button><button class="r-btn r-btn-skip" onclick="dismissReminder()">Remind later</button></div></div></div>';
+    el.innerHTML='<div class="reminder-banner"><div style="font-size:22px;flex-shrink:0;">&#128190;</div><div><div class="reminder-title">Backup reminder</div><div class="reminder-sub">Last export: '+daysAgo+'. Export to keep your words safe!</div><div class="reminder-actions"><button class="r-btn r-btn-ok" onclick="exportAll();dismissReminder()">Export now</button><button class="r-btn r-btn-skip" onclick="dismissReminder()">Remind later</button></div></div></div>';
   }else{el.innerHTML='';}
 }
 function dismissReminder(){localStorage.setItem('lastExport',Date.now().toString());document.getElementById('backupReminder').innerHTML='';}
+
 function showTab(tab){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('nav-'+tab).classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
-  if(tab==='decks'){renderDecks();checkBackupReminder();}
+  if(tab==='decks'){renderDecks();checkBackupReminder();updateApiStatus();}
   if(tab==='study'){populateStudySel();renderStudy();}
   if(tab==='add')populateSel('addDeckSel');
   if(tab==='camera')populateSel('scanDeckSel');
   if(tab==='words'){populateFilterSel();renderWordList();}
 }
+
 function populateSel(id){const s=document.getElementById(id);s.innerHTML=data.decks.length===0?'<option value="">— create a deck first —</option>':data.decks.map(d=>'<option value="'+d.id+'" '+(d.id===activeDeckId?'selected':'')+'>'+deckEmoji(d.id)+' '+d.name+'</option>').join('');}
 function populateStudySel(){const s=document.getElementById('studyDeckSel');s.innerHTML='<option value="all">All decks</option>'+data.decks.map(d=>'<option value="'+d.id+'" '+(d.id===studyDeckId?'selected':'')+'>'+deckEmoji(d.id)+' '+d.name+'</option>').join('');}
 function populateFilterSel(){const s=document.getElementById('filterDeckSel');s.innerHTML='<option value="all">All decks</option>'+data.decks.map(d=>'<option value="'+d.id+'" '+(d.id===filterDeckId?'selected':'')+'>'+deckEmoji(d.id)+' '+d.name+'</option>').join('');}
+
 function createDeck(){
   const name=document.getElementById('deckNameInput').value.trim();
   if(!name){showMsg('deckMsg','Enter a deck name','err');return;}
@@ -227,32 +338,34 @@ function renderDecks(){
     const total=data.cards.filter(c=>c.deckId===d.id).length;
     const known=data.cards.filter(c=>c.deckId===d.id&&c.known).length;
     const pct=total?Math.round(known/total*100):0;
-    return '<div class="deck-item '+(activeDeckId===d.id?'selected':'')+'" onclick="selectDeck(\''+d.id+'\')"><div class="deck-icon">'+deckEmoji(d.id)+'</div><div class="deck-info"><div class="deck-name">'+d.name+'</div><div class="deck-meta">'+total+' card'+(total!==1?'s':'')+' · '+known+' known · '+pct+'%</div><div class="deck-prog"><div class="deck-prog-fill" style="width:'+pct+'%"></div></div></div><button class="deck-del" onclick="deleteDeck(\''+d.id+'\',event)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>';
+    return '<div class="deck-item '+(activeDeckId===d.id?'selected':'')+'" onclick="selectDeck(\''+d.id+'\')"><div class="deck-icon">'+deckEmoji(d.id)+'</div><div class="deck-info"><div class="deck-name">'+d.name+'</div><div class="deck-meta">'+total+' card'+(total!==1?'s':'')+' &middot; '+known+' known &middot; '+pct+'%</div><div class="deck-prog"><div class="deck-prog-fill" style="width:'+pct+'%"></div></div></div><button class="deck-del" onclick="deleteDeck(\''+d.id+'\',event)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>';
   }).join('');
 }
 function selectDeck(id){activeDeckId=id;studyDeckId=id;renderDecks();showTab('study');}
+
 function renderStudy(){
   const el=document.getElementById('studyContent');
   if(data.decks.length===0){el.innerHTML='<div class="empty"><p>Create a deck first.</p></div>';return;}
   const pool=getCards(studyDeckId).filter(c=>!c.known);
   const total=getCards(studyDeckId).length;
   if(total===0){el.innerHTML='<div class="empty"><p>No cards in this deck yet.</p></div>';return;}
-  if(pool.length===0){el.innerHTML='<div style="text-align:center;padding:28px 0;"><div style="font-size:44px;margin-bottom:10px;">🎉</div><div style="font-family:Lora,serif;font-size:18px;color:var(--cream);margin-bottom:4px;">All '+total+' words known!</div><div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Great work, AJ!</div><button class="btn btn-secondary" onclick="resetDeck()" style="max-width:180px;margin:0 auto;">Reset &amp; study again</button></div>';return;}
+  if(pool.length===0){el.innerHTML='<div style="text-align:center;padding:28px 0;"><div style="font-size:44px;margin-bottom:10px;">&#127881;</div><div style="font-family:Lora,serif;font-size:18px;color:var(--cream);margin-bottom:4px;">All '+total+' words known!</div><div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Great work, AJ!</div><button class="btn btn-secondary" onclick="resetDeck()" style="max-width:180px;margin:0 auto;">Reset &amp; study again</button></div>';return;}
   if(!session.card||!pool.find(c=>c.id===session.card.id)){session.card=pool[Math.floor(Math.random()*pool.length)];session.shown=false;}
   const c=session.card;
   const pct=total?Math.round(((total-pool.length)/total)*100):0;
   let html='<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div><div class="prog-label"><span>'+(total-pool.length)+'/'+total+' known</span><span>'+pct+'%</span></div>';
-  html+='<div class="fc" onclick="'+(session.shown?'':'revealCard()')+'"><span class="fc-lang '+(c.direction==='en-np'?'en':'np')+'">'+(c.direction==='en-np'?'EN→NP':'NP→EN')+'</span><span class="fc-rev">'+c.reviews+'× reviewed</span><div class="fc-word">'+c.word+'</div>';
-  if(!session.shown){html+='<div class="fc-hint">tap to reveal →</div>';}
-  else{html+='<div class="fc-divider"></div><div style="width:100%;">';if(c.translation)html+='<div class="answer-row"><span class="ak">Translation</span><span class="av">'+c.translation+'</span></div>';if(c.meaning)html+='<div class="answer-row"><span class="ak">Meaning (EN)</span><span class="av">'+c.meaning+'</span></div>';if(c.npMeaning)html+='<div class="answer-row"><span class="ak">अर्थ (NP)</span><span class="av">'+c.npMeaning+'</span></div>';if(c.example)html+='<div class="answer-row"><span class="ak">Example</span><span class="av" style="font-style:italic;">'+c.example+'</span></div>';html+='</div>';}
+  html+='<div class="fc" onclick="'+(session.shown?'':'revealCard()')+'"><span class="fc-lang '+(c.direction==='en-np'?'en':'np')+'">'+(c.direction==='en-np'?'EN&#8594;NP':'NP&#8594;EN')+'</span><span class="fc-rev">'+c.reviews+'&#215; reviewed</span><div class="fc-word">'+c.word+'</div>';
+  if(!session.shown){html+='<div class="fc-hint">tap to reveal &#8594;</div>';}
+  else{html+='<div class="fc-divider"></div><div style="width:100%;">';if(c.translation)html+='<div class="answer-row"><span class="ak">Translation</span><span class="av">'+c.translation+'</span></div>';if(c.meaning)html+='<div class="answer-row"><span class="ak">Meaning (EN)</span><span class="av">'+c.meaning+'</span></div>';if(c.npMeaning)html+='<div class="answer-row"><span class="ak">&#2$35;&#2930;&#2509;&#2925; (NP)</span><span class="av">'+c.npMeaning+'</span></div>';if(c.example)html+='<div class="answer-row"><span class="ak">Example</span><span class="av" style="font-style:italic;">'+c.example+'</span></div>';html+='</div>';}
   html+='</div>';
-  if(session.shown){html+='<div class="btn-row"><button class="btn btn-teal" onclick="markCard(true)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Know it</button><button class="btn btn-rose" onclick="markCard(false)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Again</button></div>';}
+  if(session.shown){html+='<div class="btn-row"><button class="btn btn-teal" onclick="markCard(true)">&#10003; Know it</button><button class="btn btn-rose" onclick="markCard(false)">&#8635; Again</button></div>';}
   else{html+='<button class="btn btn-secondary" onclick="revealCard()" style="margin-top:4px;">Reveal answer</button>';}
   el.innerHTML=html;
 }
 function revealCard(){if(!session.shown){session.shown=true;if(session.card){session.card.reviews++;save();}renderStudy();}}
 function markCard(known){if(session.card){session.card.known=known;save();}session.card=null;session.shown=false;renderStudy();}
 function resetDeck(){getCards(studyDeckId).forEach(c=>c.known=false);save();session.card=null;renderStudy();}
+
 function addWord(){
   const deckId=document.getElementById('addDeckSel').value;
   const w=document.getElementById('wordInput').value.trim();
@@ -261,39 +374,79 @@ function addWord(){
   data.cards.push({id:Date.now().toString(),deckId,direction:document.getElementById('direction').value,word:w,translation:document.getElementById('transInput').value.trim(),meaning:document.getElementById('meaningInput').value.trim(),npMeaning:document.getElementById('npMeaningInput').value.trim(),example:document.getElementById('exampleInput').value.trim(),known:false,reviews:0});
   save();['wordInput','transInput','meaningInput','npMeaningInput','exampleInput'].forEach(id=>document.getElementById(id).value='');showMsg('addMsg','Card added!','ok');
 }
+
+// SCAN with Gemini
 async function handleImage(e){
   const file=e.target.files[0];if(!file)return;
   const deckId=document.getElementById('scanDeckSel').value;
-  if(!deckId){document.getElementById('aiStatus').innerHTML='<div class="ai-box" style="color:var(--rose);">Select a deck first.</div>';return;}
+  if(!deckId){document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--rose);">Select a deck first.</div>';return;}
+  const key=getApiKey();
+  if(!key){
+    document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--saffron);">No API key set. <span style="text-decoration:underline;cursor:pointer;" onclick="showApiOverlay()">Set up free Gemini key</span></div>';
+    return;
+  }
   const reader=new FileReader();
   reader.onload=async function(ev){
     const b64=ev.target.result.split(',')[1];
+    const mime=file.type||'image/jpeg';
     document.getElementById('imagePreview').innerHTML='<img src="'+ev.target.result+'" style="width:100%;border-radius:var(--radius);margin:10px 0;">';
-    document.getElementById('aiStatus').innerHTML='<div class="ai-box"><span class="loading">Detecting words</span></div>';
-    document.getElementById('detectedWords').innerHTML='';
+    document.getElementById('aiStatus2').innerHTML='<div class="ai-box"><span class="loading">AI is reading your words</span></div>';
     try{
-      const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},{type:'text',text:'Extract all vocabulary words or phrases from this handwritten image. For each return a JSON array of objects. Only "word" is required, rest optional: word, translation, meaning, npMeaning, example, direction ("en-np" or "np-en"). Return ONLY valid JSON array, no markdown, no explanation.'}]}]})});
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+key,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[
+          {inline_data:{mime_type:mime,data:b64}},
+          {text:'Extract all vocabulary words or phrases from this handwritten image. For each word return a JSON array of objects with these fields (only "word" is required, rest optional): word (string), translation (string), meaning (string - English definition), npMeaning (string - Nepali meaning), example (string), direction (string - "en-np" if word is English, "np-en" if word is Nepali). Auto-detect language. Return ONLY a valid JSON array. No markdown, no explanation, no backticks.'}
+        ]}]})
+      });
       const d=await resp.json();
-      const raw=d.content.map(i=>i.text||'').join('');
+      if(d.error){throw new Error(d.error.message);}
+      const raw=d.candidates[0].content.parts[0].text;
       const detected=JSON.parse(raw.replace(/```json|```/g,'').trim());
       if(!Array.isArray(detected)||detected.length===0)throw new Error('none');
-      window._detected=detected;window._scanDeckId=deckId;
-      document.getElementById('aiStatus').innerHTML='<div class="ai-box" style="color:var(--teal);">✓ '+detected.length+' word'+(detected.length!==1?'s':'')+' found — tap to add:</div>';
-      document.getElementById('detectedWords').innerHTML=detected.map((d,i)=>'<span class="chip" onclick="addDetected('+i+')" id="chip_'+i+'">+ '+d.word+(d.translation?' → '+d.translation:'')+'</span>').join('')+'<div style="margin-top:10px;"><button class="btn btn-primary" onclick="addAllDetected()">Add all '+detected.length+' cards</button></div>';
-    }catch(err){document.getElementById('aiStatus').innerHTML='<div class="ai-box" style="color:var(--rose);">Could not detect words. Try a clearer photo.</div>';}
-  };reader.readAsDataURL(file);
+      scanDeckIdForEdit=deckId;
+      editedWords=detected.map((w,i)=>({...w,_id:i,_include:true}));
+      openEditModal();
+      document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--teal);">&#10003; '+detected.length+' word'+(detected.length!==1?'s':'')+' detected! Review and edit below.</div>';
+    }catch(err){
+      console.error(err);
+      document.getElementById('aiStatus2').innerHTML='<div class="ai-box" style="color:var(--rose);">Could not detect words. Try a clearer photo with good lighting.<br><small style="color:var(--text3);">'+err.message+'</small></div>';
+    }
+  };
+  reader.readAsDataURL(file);
 }
-function addDetected(i){const d=window._detected[i];const deckId=window._scanDeckId;if(!d||!deckId)return;data.cards.push({id:(Date.now()+i).toString(),deckId,direction:d.direction||'en-np',word:d.word,translation:d.translation||'',meaning:d.meaning||'',npMeaning:d.npMeaning||'',example:d.example||'',known:false,reviews:0});save();const chip=document.getElementById('chip_'+i);if(chip)chip.classList.add('added');}
-function addAllDetected(){if(!window._detected)return;window._detected.forEach((_,i)=>addDetected(i));document.getElementById('detectedWords').innerHTML+='<p style="font-size:12px;color:var(--teal);margin-top:8px;">✓ All cards added!</p>';}
+
+// Edit modal
+function openEditModal(){
+  const el=document.getElementById('editCardsList');
+  el.innerHTML=editedWords.map((w,i)=>'<div class="edit-card" id="ecard_'+i+'"><div class="edit-card-head"><span class="edit-word-num">Word '+(i+1)+'</span><button class="edit-remove" onclick="removeEditWord('+i+')" title="Remove">&#10005;</button></div><div class="edit-field"><label>Word *</label><input type="text" value="'+esc(w.word||'')+'" onchange="editedWords['+i+'].word=this.value"></div><div class="edit-field"><label>Translation</label><input type="text" value="'+esc(w.translation||'')+'" placeholder="optional" onchange="editedWords['+i+'].translation=this.value"></div><div class="edit-field"><label>English meaning</label><input type="text" value="'+esc(w.meaning||'')+'" placeholder="optional" onchange="editedWords['+i+'].meaning=this.value"></div><div class="edit-field"><label>Nepali meaning</label><input type="text" value="'+esc(w.npMeaning||'')+'" placeholder="optional" onchange="editedWords['+i+'].npMeaning=this.value"></div><div class="edit-field"><label>Example</label><input type="text" value="'+esc(w.example||'')+'" placeholder="optional" onchange="editedWords['+i+'].example=this.value"></div></div>').join('');
+  document.getElementById('editModal').style.display='flex';
+}
+function esc(s){return s.replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function removeEditWord(i){editedWords[i]._include=false;const el=document.getElementById('ecard_'+i);if(el){el.style.opacity='0.3';el.style.pointerEvents='none';}}
+function closeEditModal(){document.getElementById('editModal').style.display='none';}
+function addAllEdited(){
+  const toAdd=editedWords.filter(w=>w._include&&w.word&&w.word.trim());
+  if(toAdd.length===0){showMsgEl('editMsg','No words to add','err');return;}
+  toAdd.forEach((w,i)=>{
+    data.cards.push({id:(Date.now()+i).toString(),deckId:scanDeckIdForEdit,direction:w.direction||'en-np',word:w.word.trim(),translation:w.translation||'',meaning:w.meaning||'',npMeaning:w.npMeaning||'',example:w.example||'',known:false,reviews:0});
+  });
+  save();
+  showMsgEl('editMsg',toAdd.length+' cards added!','ok');
+  setTimeout(()=>{closeEditModal();showTab('study');},1200);
+}
+
 function renderWordList(){
   const filtered=getCards(filterDeckId);
   document.getElementById('totalCount').textContent=filtered.length;
   document.getElementById('learnedCount').textContent=filtered.filter(c=>c.known).length;
   const el=document.getElementById('wordList');
   if(filtered.length===0){el.innerHTML='<div class="empty"><p>No words yet</p></div>';return;}
-  el.innerHTML=filtered.map(c=>{const deck=data.decks.find(d=>d.id===c.deckId);return '<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><div style="flex:1;min-width:0;"><span style="font-weight:500;font-size:14px;color:var(--cream);">'+c.word+'</span>'+(c.translation?'<span style="font-size:12px;color:var(--text3);margin-left:5px;">→ '+c.translation+'</span>':'')+'<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap;"><span style="font-size:11px;padding:1px 7px;border-radius:20px;'+(c.direction==='en-np'?'background:rgba(46,196,165,0.12);color:var(--teal);':'background:rgba(232,151,58,0.12);color:var(--saffron);')+'">'+(c.direction==='en-np'?'EN→NP':'NP→EN')+'</span>'+(c.known?'<span style="font-size:11px;padding:1px 7px;border-radius:20px;background:rgba(46,196,165,0.12);color:var(--teal);">✓ Known</span>':'')+(deck?'<span style="font-size:11px;color:var(--text3);">'+deckEmoji(deck.id)+' '+deck.name+'</span>':'')+'</div></div><button onclick="deleteCard(\''+c.id+'\')" style="width:28px;height:28px;border:none;background:rgba(224,92,110,0.1);border-radius:7px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div>';}).join('');
+  el.innerHTML=filtered.map(c=>{const deck=data.decks.find(d=>d.id===c.deckId);return '<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><div style="flex:1;min-width:0;"><span style="font-weight:500;font-size:14px;color:var(--cream);">'+c.word+'</span>'+(c.translation?'<span style="font-size:12px;color:var(--text3);margin-left:5px;">&#8594; '+c.translation+'</span>':'')+'<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap;"><span style="font-size:11px;padding:1px 7px;border-radius:20px;'+(c.direction==='en-np'?'background:rgba(46,196,165,0.12);color:var(--teal);':'background:rgba(232,151,58,0.12);color:var(--saffron);')+'">'+(c.direction==='en-np'?'EN&#8594;NP':'NP&#8594;EN')+'</span>'+(c.known?'<span style="font-size:11px;padding:1px 7px;border-radius:20px;background:rgba(46,196,165,0.12);color:var(--teal);">&#10003; Known</span>':'')+(deck?'<span style="font-size:11px;color:var(--text3);">'+deckEmoji(deck.id)+' '+deck.name+'</span>':'')+'</div></div><button onclick="deleteCard(\''+c.id+'\')" style="width:28px;height:28px;border:none;background:rgba(224,92,110,0.1);border-radius:7px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div>';}).join('');
 }
 function deleteCard(id){data.cards=data.cards.filter(c=>c.id!==id);save();renderWordList();}
+
 function exportAll(){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
@@ -307,8 +460,17 @@ function importAll(e){
   r.onload=function(ev){try{const imp=JSON.parse(ev.target.result);if(!imp.decks||!imp.cards)throw new Error();const existD=new Set(data.decks.map(d=>d.id));const existC=new Set(data.cards.map(c=>c.id));imp.decks.forEach(d=>{if(!existD.has(d.id))data.decks.push(d);});imp.cards.forEach(c=>{if(!existC.has(c.id))data.cards.push(c);});save();renderDecks();showMsg('importMsg','Imported '+imp.decks.length+' deck(s), '+imp.cards.length+' card(s)','ok');}catch(err){showMsg('importMsg','Invalid file','err');}};
   r.readAsText(file);
 }
+
 function showMsg(id,msg,type){const el=document.getElementById(id);if(!el)return;el.className='msg '+type;el.textContent=msg;setTimeout(()=>el.textContent='',3000);}
-updateBadge();renderDecks();checkBackupReminder();
+function showMsgEl(id,msg,type){const el=document.getElementById(id);if(!el)return;el.className='msg '+type;el.textContent=msg;setTimeout(()=>el.textContent='',3000);}
+
+// Init
+updateBadge();
+renderDecks();
+checkBackupReminder();
+updateApiStatus();
+// Show API setup on first visit if no key
+if(!getApiKey()){setTimeout(()=>showApiOverlay(),800);}
 </script>
 </body>
 </html>
