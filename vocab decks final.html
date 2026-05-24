@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Vocab Decks</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1c2e;--navy2:#162336;--navy3:#1e3048;--navy4:#2a4160;--saffron:#e8973a;--cream:#fdf6ed;--teal:#2ec4a5;--rose:#e05c6e;--text:#fdf6ed;--text2:#b8cce0;--text3:#6e8faa;--card-bg:#162336;--input-bg:#1e3048;--radius:14px;--radius-sm:8px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--navy);font-family:'DM Sans',sans-serif;color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+.app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;width:100%;}
+.header{padding:14px 20px 8px;flex-shrink:0;}
+.header-top{display:flex;align-items:center;justify-content:space-between;}
+.header-title{font-family:'Lora',serif;font-size:20px;color:var(--cream);}
+.header-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.header-badge{background:var(--saffron);color:var(--navy);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+.nav{display:flex;gap:4px;padding:0 14px 10px;flex-shrink:0;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;border:none;background:transparent;color:var(--text3);font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s;}
+.nav-btn svg{width:18px;height:18px;stroke-width:1.8;}
+.nav-btn.active{background:var(--navy3);color:var(--saffron);}
+.content{flex:1;overflow-y:auto;padding:0 14px 24px;-webkit-overflow-scrolling:touch;}
+.content::-webkit-scrollbar{display:none;}
+.section{display:none;animation:fadeIn 0.2s ease;}
+.section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.card{background:var(--card-bg);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+.card-title{font-size:14px;font-weight:500;color:var(--cream);margin-bottom:10px;}
+.deck-item{background:var(--card-bg);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.18s;}
+.deck-item.selected{border-color:var(--saffron);}
+.deck-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--navy4),var(--navy3));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.deck-info{flex:1;min-width:0;}
+.deck-name{font-size:14px;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.deck-meta{font-size:11px;color:var(--text3);margin-top:1px;}
+.deck-prog{height:3px;background:var(--navy4);border-radius:2px;margin-top:5px;}
+.deck-prog-fill{height:100%;border-radius:2px;background:var(--saffron);transition:width 0.4s;}
+.deck-del{width:30px;height:30px;border:none;background:rgba(224,92,110,0.1);border-radius:8px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+label{display:block;font-size:11px;color:var(--text3);margin-bottom:4px;margin-top:10px;letter-spacing:0.3px;text-transform:uppercase;}
+input[type=text],select,textarea{width:100%;background:var(--input-bg);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--saffron);}
+input[type=text]::placeholder,textarea::placeholder{color:var(--text3);}
+select option{background:var(--navy2);}
+textarea{min-height:68px;resize:vertical;line-height:1.5;}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.18s;}
+.btn:active{transform:scale(0.97);}
+.btn-primary{background:var(--saffron);color:var(--navy);}
+.btn-secondary{background:var(--navy3);color:var(--text2);border:1px solid rgba(255,255,255,0.1);}
+.btn-teal{background:rgba(46,196,165,0.15);color:var(--teal);border:1px solid rgba(46,196,165,0.25);}
+.btn-rose{background:rgba(224,92,110,0.12);color:var(--rose);border:1px solid rgba(224,92,110,0.2);}
+.btn-row{display:flex;gap:8px;margin-top:10px;}
+.btn-row .btn{flex:1;}
+.prog-bar{height:4px;background:var(--navy3);border-radius:2px;margin-bottom:8px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--saffron));transition:width 0.4s;}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:12px;}
+.fc{background:var(--card-bg);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 20px;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;position:relative;transition:transform 0.15s;margin-bottom:10px;}
+.fc:active{transform:scale(0.985);}
+.fc-lang{position:absolute;top:12px;left:12px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;}
+.fc-lang.en{background:rgba(46,196,165,0.15);color:var(--teal);}
+.fc-lang.np{background:rgba(232,151,58,0.15);color:var(--saffron);}
+.fc-rev{position:absolute;top:12px;right:12px;font-size:11px;color:var(--text3);}
+.fc-word{font-family:'Lora',serif;font-size:28px;color:var(--cream);margin-bottom:6px;line-height:1.2;}
+.fc-hint{font-size:12px;color:var(--text3);}
+.fc-divider{width:36px;height:1px;background:rgba(255,255,255,0.1);margin:12px auto;}
+.answer-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;width:100%;}
+.answer-row:last-child{border:none;}
+.ak{color:var(--text3);min-width:78px;text-align:left;}
+.av{color:var(--cream);text-align:right;max-width:60%;}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card-bg);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:12px;}
+.stat-n{font-family:'Lora',serif;font-size:26px;color:var(--cream);}
+.stat-l{font-size:11px;color:var(--text3);margin-top:1px;}
+.drop-zone{border:1.5px dashed rgba(232,151,58,0.35);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;color:var(--text3);margin-bottom:10px;}
+.ai-box{background:var(--navy3);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text2);margin:8px 0;max-height:140px;overflow-y:auto;}
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:12px;padding:4px 11px;border:1px solid rgba(232,151,58,0.3);border-radius:20px;margin:3px;cursor:pointer;color:var(--saffron);background:rgba(232,151,58,0.08);}
+.chip.added{opacity:0.3;pointer-events:none;}
+.empty{text-align:center;padding:28px 0;color:var(--text3);}
+.empty p{font-size:13px;}
+.msg{font-size:12px;text-align:center;margin-top:6px;min-height:16px;}
+.msg.ok{color:var(--teal);}
+.msg.err{color:var(--rose);}
+.sec-head{margin-bottom:12px;}
+.sec-head h2{font-family:'Lora',serif;font-size:17px;color:var(--cream);}
+#fileInput,#importFile{display:none;}
+@keyframes dots{0%,20%{content:'';}40%{content:'.';}60%{content:'..';}80%,100%{content:'...'}}
+.loading::after{content:'';animation:dots 1.2s steps(4,end) infinite;}
+.reminder-banner{background:linear-gradient(135deg,rgba(232,151,58,0.18),rgba(232,151,58,0.08));border:1px solid rgba(232,151,58,0.35);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;}
+.reminder-title{font-size:13px;font-weight:500;color:var(--saffron);}
+.reminder-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.reminder-actions{display:flex;gap:6px;margin-top:8px;}
+.r-btn{font-size:12px;padding:5px 12px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;}
+.r-btn-ok{background:var(--saffron);color:var(--navy);}
+.r-btn-skip{background:transparent;color:var(--text3);border:1px solid rgba(255,255,255,0.1);}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div><div class="header-title">Vocab Decks</div><div class="header-sub">English ↔ Nepali · AI powered</div></div>
+      <div class="header-badge" id="headerBadge">0 words</div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="showTab('decks')" id="nav-decks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5a2 2 0 012-2h13a.5.5 0 01.5.5v13"/><path d="M6 17h14M6 21h14"/></svg>Decks</button>
+    <button class="nav-btn" onclick="showTab('study')" id="nav-study"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 4v16M2 12h20"/></svg>Study</button>
+    <button class="nav-btn" onclick="showTab('add')" id="nav-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>Add</button>
+    <button class="nav-btn" onclick="showTab('camera')" id="nav-camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan</button>
+    <button class="nav-btn" onclick="showTab('words')" id="nav-words"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>Words</button>
+  </div>
+  <div class="content">
+    <div id="tab-decks" class="section active">
+      <div id="backupReminder"></div>
+      <div class="sec-head"><h2>My Decks</h2></div>
+      <div id="deckList"></div>
+      <div class="card">
+        <div class="card-title">New deck</div>
+        <label>Deck name</label>
+        <input type="text" id="deckNameInput" placeholder="e.g. Atomic Habits">
+        <div style="margin-top:10px;"><button class="btn btn-primary" onclick="createDeck()">Create deck</button></div>
+        <div class="msg" id="deckMsg"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Backup &amp; restore</div>
+        <div class="btn-row">
+          <button class="btn btn-teal" onclick="exportAll()" style="flex:1;font-size:13px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export .json</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" style="flex:1;font-size:13px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" onchange="importAll(event)">
+        <div class="msg" id="importMsg"></div>
+      </div>
+    </div>
+    <div id="tab-study" class="section">
+      <div class="sec-head"><h2>Study</h2></div>
+      <label>Choose deck</label>
+      <select id="studyDeckSel" onchange="studyDeckId=this.value;session.card=null;session.shown=false;renderStudy();" style="margin-bottom:12px;"></select>
+      <div id="studyContent"></div>
+    </div>
+    <div id="tab-add" class="section">
+      <div class="sec-head"><h2>Add word</h2></div>
+      <div class="card">
+        <label>Deck</label><select id="addDeckSel"></select>
+        <label>Direction</label>
+        <select id="direction"><option value="en-np">English → Nepali</option><option value="np-en">Nepali → English</option></select>
+        <label>Word / शब्द *</label><input type="text" id="wordInput" placeholder="e.g. ephemeral">
+        <label>Translation (optional)</label><input type="text" id="transInput" placeholder="e.g. क्षणिक">
+        <label>English meaning (optional)</label><textarea id="meaningInput" placeholder="e.g. lasting for a very short time"></textarea>
+        <label>Nepali meaning / अर्थ (optional)</label><textarea id="npMeaningInput" placeholder="e.g. थोरै समयको लागि मात्र रहने"></textarea>
+        <label>Example sentence (optional)</label><input type="text" id="exampleInput" placeholder="e.g. The joy was ephemeral.">
+        <div style="margin-top:12px;"><button class="btn btn-primary" onclick="addWord()">Add card</button></div>
+        <div class="msg" id="addMsg"></div>
+      </div>
+    </div>
+    <div id="tab-camera" class="section">
+      <div class="sec-head"><h2>Scan copy</h2></div>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:10px;">Photo your handwritten vocab — AI detects words and builds cards.</p>
+      <label>Add to deck</label>
+      <select id="scanDeckSel" style="margin-bottom:12px;"></select>
+      <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleImage(event)">
+      <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+        <div style="font-size:34px;margin-bottom:6px;">📷</div>
+        <p style="font-size:14px;">Tap to take photo</p>
+        <span style="font-size:12px;">or choose from library</span>
+      </div>
+      <div id="imagePreview"></div><div id="aiStatus"></div><div id="detectedWords"></div>
+    </div>
+    <div id="tab-words" class="section">
+      <div class="sec-head"><h2>All words</h2></div>
+      <label>Filter by deck</label>
+      <select id="filterDeckSel" onchange="filterDeckId=this.value;renderWordList();" style="margin-bottom:12px;"></select>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-n" id="totalCount">0</div><div class="stat-l">Total cards</div></div>
+        <div class="stat"><div class="stat-n" id="learnedCount">0</div><div class="stat-l">Known</div></div>
+      </div>
+      <div class="card"><div id="wordList"></div></div>
+    </div>
+  </div>
+</div>
+<script>
+let data=JSON.parse(localStorage.getItem('vocabApp3')||'{"decks":[],"cards":[]}');
+let studyDeckId='all',filterDeckId='all',activeDeckId=null;
+let session={card:null,shown:false};
+const EMOJIS=['📗','📘','📙','📕','📓','📔','📒','📃','📜'];
+function save(){localStorage.setItem('vocabApp3',JSON.stringify(data));updateBadge();}
+function updateBadge(){document.getElementById('headerBadge').textContent=data.cards.length+' word'+(data.cards.length!==1?'s':'');}
+function deckEmoji(id){const i=data.decks.findIndex(d=>d.id===id);return EMOJIS[i%EMOJIS.length];}
+function getCards(dId){return dId==='all'?data.cards:data.cards.filter(c=>c.deckId===dId);}
+function checkBackupReminder(){
+  const el=document.getElementById('backupReminder');if(!el)return;
+  const last=parseInt(localStorage.getItem('lastExport')||'0');
+  const now=Date.now();
+  if(data.cards.length===0){el.innerHTML='';return;}
+  if(now-last>7*24*60*60*1000){
+    const daysAgo=last===0?'never':Math.floor((now-last)/86400000)+' days ago';
+    el.innerHTML='<div class="reminder-banner"><div style="font-size:22px;flex-shrink:0;">💾</div><div><div class="reminder-title">Backup reminder</div><div class="reminder-sub">Last export: '+daysAgo+'. Export so you never lose your words!</div><div class="reminder-actions"><button class="r-btn r-btn-ok" onclick="exportAll();dismissReminder()">Export now</button><button class="r-btn r-btn-skip" onclick="dismissReminder()">Remind later</button></div></div></div>';
+  }else{el.innerHTML='';}
+}
+function dismissReminder(){localStorage.setItem('lastExport',Date.now().toString());document.getElementById('backupReminder').innerHTML='';}
+function showTab(tab){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('nav-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='decks'){renderDecks();checkBackupReminder();}
+  if(tab==='study'){populateStudySel();renderStudy();}
+  if(tab==='add')populateSel('addDeckSel');
+  if(tab==='camera')populateSel('scanDeckSel');
+  if(tab==='words'){populateFilterSel();renderWordList();}
+}
+function populateSel(id){const s=document.getElementById(id);s.innerHTML=data.decks.length===0?'<option value="">— create a deck first —</option>':data.decks.map(d=>'<option value="'+d.id+'" '+(d.id===activeDeckId?'selected':'')+'>'+deckEmoji(d.id)+' '+d.name+'</option>').join('');}
+function populateStudySel(){const s=document.getElementById('studyDeckSel');s.innerHTML='<option value="all">All decks</option>'+data.decks.map(d=>'<option value="'+d.id+'" '+(d.id===studyDeckId?'selected':'')+'>'+deckEmoji(d.id)+' '+d.name+'</option>').join('');}
+function populateFilterSel(){const s=document.getElementById('filterDeckSel');s.innerHTML='<option value="all">All decks</option>'+data.decks.map(d=>'<option value="'+d.id+'" '+(d.id===filterDeckId?'selected':'')+'>'+deckEmoji(d.id)+' '+d.name+'</option>').join('');}
+function createDeck(){
+  const name=document.getElementById('deckNameInput').value.trim();
+  if(!name){showMsg('deckMsg','Enter a deck name','err');return;}
+  if(data.decks.find(d=>d.name.toLowerCase()===name.toLowerCase())){showMsg('deckMsg','Already exists','err');return;}
+  const id=Date.now().toString();data.decks.push({id,name});activeDeckId=id;save();
+  document.getElementById('deckNameInput').value='';showMsg('deckMsg','Deck created!','ok');renderDecks();
+}
+function deleteDeck(id,e){
+  e.stopPropagation();if(!confirm('Delete this deck and all its cards?'))return;
+  data.decks=data.decks.filter(d=>d.id!==id);data.cards=data.cards.filter(c=>c.deckId!==id);
+  if(activeDeckId===id)activeDeckId=null;save();renderDecks();
+}
+function renderDecks(){
+  updateBadge();const el=document.getElementById('deckList');
+  if(data.decks.length===0){el.innerHTML='<div class="empty"><p>No decks yet.<br>Create your first one below.</p></div>';return;}
+  el.innerHTML=data.decks.map(d=>{
+    const total=data.cards.filter(c=>c.deckId===d.id).length;
+    const known=data.cards.filter(c=>c.deckId===d.id&&c.known).length;
+    const pct=total?Math.round(known/total*100):0;
+    return '<div class="deck-item '+(activeDeckId===d.id?'selected':'')+'" onclick="selectDeck(\''+d.id+'\')"><div class="deck-icon">'+deckEmoji(d.id)+'</div><div class="deck-info"><div class="deck-name">'+d.name+'</div><div class="deck-meta">'+total+' card'+(total!==1?'s':'')+' · '+known+' known · '+pct+'%</div><div class="deck-prog"><div class="deck-prog-fill" style="width:'+pct+'%"></div></div></div><button class="deck-del" onclick="deleteDeck(\''+d.id+'\',event)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>';
+  }).join('');
+}
+function selectDeck(id){activeDeckId=id;studyDeckId=id;renderDecks();showTab('study');}
+function renderStudy(){
+  const el=document.getElementById('studyContent');
+  if(data.decks.length===0){el.innerHTML='<div class="empty"><p>Create a deck first.</p></div>';return;}
+  const pool=getCards(studyDeckId).filter(c=>!c.known);
+  const total=getCards(studyDeckId).length;
+  if(total===0){el.innerHTML='<div class="empty"><p>No cards in this deck yet.</p></div>';return;}
+  if(pool.length===0){el.innerHTML='<div style="text-align:center;padding:28px 0;"><div style="font-size:44px;margin-bottom:10px;">🎉</div><div style="font-family:Lora,serif;font-size:18px;color:var(--cream);margin-bottom:4px;">All '+total+' words known!</div><div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Great work, AJ!</div><button class="btn btn-secondary" onclick="resetDeck()" style="max-width:180px;margin:0 auto;">Reset &amp; study again</button></div>';return;}
+  if(!session.card||!pool.find(c=>c.id===session.card.id)){session.card=pool[Math.floor(Math.random()*pool.length)];session.shown=false;}
+  const c=session.card;
+  const pct=total?Math.round(((total-pool.length)/total)*100):0;
+  let html='<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div><div class="prog-label"><span>'+(total-pool.length)+'/'+total+' known</span><span>'+pct+'%</span></div>';
+  html+='<div class="fc" onclick="'+(session.shown?'':'revealCard()')+'"><span class="fc-lang '+(c.direction==='en-np'?'en':'np')+'">'+(c.direction==='en-np'?'EN→NP':'NP→EN')+'</span><span class="fc-rev">'+c.reviews+'× reviewed</span><div class="fc-word">'+c.word+'</div>';
+  if(!session.shown){html+='<div class="fc-hint">tap to reveal →</div>';}
+  else{html+='<div class="fc-divider"></div><div style="width:100%;">';if(c.translation)html+='<div class="answer-row"><span class="ak">Translation</span><span class="av">'+c.translation+'</span></div>';if(c.meaning)html+='<div class="answer-row"><span class="ak">Meaning (EN)</span><span class="av">'+c.meaning+'</span></div>';if(c.npMeaning)html+='<div class="answer-row"><span class="ak">अर्थ (NP)</span><span class="av">'+c.npMeaning+'</span></div>';if(c.example)html+='<div class="answer-row"><span class="ak">Example</span><span class="av" style="font-style:italic;">'+c.example+'</span></div>';html+='</div>';}
+  html+='</div>';
+  if(session.shown){html+='<div class="btn-row"><button class="btn btn-teal" onclick="markCard(true)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Know it</button><button class="btn btn-rose" onclick="markCard(false)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Again</button></div>';}
+  else{html+='<button class="btn btn-secondary" onclick="revealCard()" style="margin-top:4px;">Reveal answer</button>';}
+  el.innerHTML=html;
+}
+function revealCard(){if(!session.shown){session.shown=true;if(session.card){session.card.reviews++;save();}renderStudy();}}
+function markCard(known){if(session.card){session.card.known=known;save();}session.card=null;session.shown=false;renderStudy();}
+function resetDeck(){getCards(studyDeckId).forEach(c=>c.known=false);save();session.card=null;renderStudy();}
+function addWord(){
+  const deckId=document.getElementById('addDeckSel').value;
+  const w=document.getElementById('wordInput').value.trim();
+  if(!deckId){showMsg('addMsg','Select a deck first','err');return;}
+  if(!w){showMsg('addMsg','Enter a word first','err');return;}
+  data.cards.push({id:Date.now().toString(),deckId,direction:document.getElementById('direction').value,word:w,translation:document.getElementById('transInput').value.trim(),meaning:document.getElementById('meaningInput').value.trim(),npMeaning:document.getElementById('npMeaningInput').value.trim(),example:document.getElementById('exampleInput').value.trim(),known:false,reviews:0});
+  save();['wordInput','transInput','meaningInput','npMeaningInput','exampleInput'].forEach(id=>document.getElementById(id).value='');showMsg('addMsg','Card added!','ok');
+}
+async function handleImage(e){
+  const file=e.target.files[0];if(!file)return;
+  const deckId=document.getElementById('scanDeckSel').value;
+  if(!deckId){document.getElementById('aiStatus').innerHTML='<div class="ai-box" style="color:var(--rose);">Select a deck first.</div>';return;}
+  const reader=new FileReader();
+  reader.onload=async function(ev){
+    const b64=ev.target.result.split(',')[1];
+    document.getElementById('imagePreview').innerHTML='<img src="'+ev.target.result+'" style="width:100%;border-radius:var(--radius);margin:10px 0;">';
+    document.getElementById('aiStatus').innerHTML='<div class="ai-box"><span class="loading">Detecting words</span></div>';
+    document.getElementById('detectedWords').innerHTML='';
+    try{
+      const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},{type:'text',text:'Extract all vocabulary words or phrases from this handwritten image. For each return a JSON array of objects. Only "word" is required, rest optional: word, translation, meaning, npMeaning, example, direction ("en-np" or "np-en"). Return ONLY valid JSON array, no markdown, no explanation.'}]}]})});
+      const d=await resp.json();
+      const raw=d.content.map(i=>i.text||'').join('');
+      const detected=JSON.parse(raw.replace(/```json|```/g,'').trim());
+      if(!Array.isArray(detected)||detected.length===0)throw new Error('none');
+      window._detected=detected;window._scanDeckId=deckId;
+      document.getElementById('aiStatus').innerHTML='<div class="ai-box" style="color:var(--teal);">✓ '+detected.length+' word'+(detected.length!==1?'s':'')+' found — tap to add:</div>';
+      document.getElementById('detectedWords').innerHTML=detected.map((d,i)=>'<span class="chip" onclick="addDetected('+i+')" id="chip_'+i+'">+ '+d.word+(d.translation?' → '+d.translation:'')+'</span>').join('')+'<div style="margin-top:10px;"><button class="btn btn-primary" onclick="addAllDetected()">Add all '+detected.length+' cards</button></div>';
+    }catch(err){document.getElementById('aiStatus').innerHTML='<div class="ai-box" style="color:var(--rose);">Could not detect words. Try a clearer photo.</div>';}
+  };reader.readAsDataURL(file);
+}
+function addDetected(i){const d=window._detected[i];const deckId=window._scanDeckId;if(!d||!deckId)return;data.cards.push({id:(Date.now()+i).toString(),deckId,direction:d.direction||'en-np',word:d.word,translation:d.translation||'',meaning:d.meaning||'',npMeaning:d.npMeaning||'',example:d.example||'',known:false,reviews:0});save();const chip=document.getElementById('chip_'+i);if(chip)chip.classList.add('added');}
+function addAllDetected(){if(!window._detected)return;window._detected.forEach((_,i)=>addDetected(i));document.getElementById('detectedWords').innerHTML+='<p style="font-size:12px;color:var(--teal);margin-top:8px;">✓ All cards added!</p>';}
+function renderWordList(){
+  const filtered=getCards(filterDeckId);
+  document.getElementById('totalCount').textContent=filtered.length;
+  document.getElementById('learnedCount').textContent=filtered.filter(c=>c.known).length;
+  const el=document.getElementById('wordList');
+  if(filtered.length===0){el.innerHTML='<div class="empty"><p>No words yet</p></div>';return;}
+  el.innerHTML=filtered.map(c=>{const deck=data.decks.find(d=>d.id===c.deckId);return '<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><div style="flex:1;min-width:0;"><span style="font-weight:500;font-size:14px;color:var(--cream);">'+c.word+'</span>'+(c.translation?'<span style="font-size:12px;color:var(--text3);margin-left:5px;">→ '+c.translation+'</span>':'')+'<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap;"><span style="font-size:11px;padding:1px 7px;border-radius:20px;'+(c.direction==='en-np'?'background:rgba(46,196,165,0.12);color:var(--teal);':'background:rgba(232,151,58,0.12);color:var(--saffron);')+'">'+(c.direction==='en-np'?'EN→NP':'NP→EN')+'</span>'+(c.known?'<span style="font-size:11px;padding:1px 7px;border-radius:20px;background:rgba(46,196,165,0.12);color:var(--teal);">✓ Known</span>':'')+(deck?'<span style="font-size:11px;color:var(--text3);">'+deckEmoji(deck.id)+' '+deck.name+'</span>':'')+'</div></div><button onclick="deleteCard(\''+c.id+'\')" style="width:28px;height:28px;border:none;background:rgba(224,92,110,0.1);border-radius:7px;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div>';}).join('');
+}
+function deleteCard(id){data.cards=data.cards.filter(c=>c.id!==id);save();renderWordList();}
+function exportAll(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='vocab_decks_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  localStorage.setItem('lastExport',Date.now().toString());
+  document.getElementById('backupReminder').innerHTML='';
+}
+function importAll(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=function(ev){try{const imp=JSON.parse(ev.target.result);if(!imp.decks||!imp.cards)throw new Error();const existD=new Set(data.decks.map(d=>d.id));const existC=new Set(data.cards.map(c=>c.id));imp.decks.forEach(d=>{if(!existD.has(d.id))data.decks.push(d);});imp.cards.forEach(c=>{if(!existC.has(c.id))data.cards.push(c);});save();renderDecks();showMsg('importMsg','Imported '+imp.decks.length+' deck(s), '+imp.cards.length+' card(s)','ok');}catch(err){showMsg('importMsg','Invalid file','err');}};
+  r.readAsText(file);
+}
+function showMsg(id,msg,type){const el=document.getElementById(id);if(!el)return;el.className='msg '+type;el.textContent=msg;setTimeout(()=>el.textContent='',3000);}
+updateBadge();renderDecks();checkBackupReminder();
+</script>
+</body>
+</html>
